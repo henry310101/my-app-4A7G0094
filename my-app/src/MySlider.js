@@ -13,3 +13,4 @@ function MySlider(){
         />
     );
 }
+export default MySlider;
