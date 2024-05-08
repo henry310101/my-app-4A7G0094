@@ -1,22 +1,19 @@
-import logo from './logo.svg';
+
 import './App.css';
+import MySlider from './MySlider';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <h1>hello react! 20240508</h1>
+        <h2>react第一個元件</h2>
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          資工三甲 4A7G0094 朱紘緯
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+       <MySlider color="RED" />
+       <MySlider color="GREEN"/>
+       <MySlider color="BLUE"/>
       </header>
     </div>
   );
