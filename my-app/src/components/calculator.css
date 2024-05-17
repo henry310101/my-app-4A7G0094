@@ -1,0 +1,82 @@
+.outside{
+    border : 4px dotted black;
+    width: 360px;
+    height: 470px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.calculator{
+    height: 430px;
+    width: 320px;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-radius: 10px;
+    background-color: rgb(175, 160, 160);
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid black;
+
+}
+.dispaly{
+    width: 100%;
+    height: 75px;
+    background-color: black;
+    text-align: right;
+    
+    align-items: center;
+    font-size: 50px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    
+   
+}
+
+.buttons{
+    display: inline-grid;
+    margin: 10px;
+}
+
+.btn{
+    display: inline-block;
+    color: white;
+    padding: 5%;
+    border: 1px solid black;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    margin: 5px;
+    font-size: 25px;
+}
+
+.btn-action{
+    background-color: brown;
+    color: rgb(245, 245, 245);
+    
+    font-size: 25px;
+    text-align: center;
+}
+
+.btn-number{
+    background-color: rgb(75, 73, 73);
+    color: rgb(250, 250, 250);
+}
+
+.btn-operator{
+    background-color: darkgoldenrod;
+    color: rgb(255, 255, 255);
+    
+}
+.zero{
+    background-color: rgb(75, 73, 73);
+    color: rgb(250, 250, 250);
+    width: 130px;
+    border-radius: 120px;
+}
+
+.btn:hover, .zero:hover{
+    background-color: rgb(211, 197, 197);
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+}
+
