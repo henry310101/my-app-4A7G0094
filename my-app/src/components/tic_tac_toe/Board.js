@@ -2,11 +2,14 @@ import React from "react";
 import Square from "./Square";
 import "./tictactoe.css";
 
-function Board({squares}) {
+function Board({xIsNext,squares,onPlay}) {
     let status = "目前狀態";
 
     const handleClick = (i) => {
-
+        const nextSquares = squares.slice();
+        nextSquares[i] = xIsNext ? "X" : "O";
+        onPlay(nextSquares);
+        
 
     }
 
