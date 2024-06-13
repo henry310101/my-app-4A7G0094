@@ -14,9 +14,9 @@ function MyRGBPanel(){
         margin: "auto",
         justifyContent:"center"
     };
-    const [red, setRed] = useState(128);
-    const [green, setGreen] = useState(128);
-    const [blue, setBlue] = useState(128);
+    const [red, setRed] = useState(0);
+    const [green, setGreen] = useState(0);
+    const [blue, setBlue] = useState(0);
 
     const updateRed = (c) =>setRed(c);
     const updateGreen = (c) =>setGreen(c);
