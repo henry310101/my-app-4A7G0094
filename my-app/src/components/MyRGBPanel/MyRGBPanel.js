@@ -26,7 +26,6 @@ function MyRGBPanel(){
         <>
             <div style={panelCSS}>
                 <h3>MyRGBPanel元件</h3>
-
                         <div 
                         style={{
                         backgroundColor: `rgb(${red}, ${green}, ${blue})`,
