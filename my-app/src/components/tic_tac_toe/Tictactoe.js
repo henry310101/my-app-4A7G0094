@@ -60,8 +60,8 @@ function Tictactoe() {
                 <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
             </div>
             <div className="game-info">
-                <h4 style={{ marginBottom: '5px' }}>遊戲歷程</h4>
-                <ul style={{ marginTop: '0', paddingLeft: '20px' }}>{moves}</ul>
+                <h4>遊戲歷程</h4>
+                <ul>{moves}</ul>
             </div>
         </div>
     );
