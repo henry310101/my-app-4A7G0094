@@ -2,8 +2,10 @@ import React from 'react';
 import './App.css';
 import MyRGBPanel from './components/MyRGBPanel/MyRGBPanel'
 import MyCalculator from './components/MyCalculator/MyCalculator'
-
-import Tictactoe from './components/tic_tac_toe/Tictactoe';
+import entersound from './components/DTW/entersound'
+import Tictactoe from './components/tic_tac_toe/Tictactoe'
+import WebSocketAudioUpload from './components/DTW/entersound';
+import AudioFileList from './components/WebSocket/AudioFileList';
 
 
 function App() {
@@ -15,19 +17,8 @@ function App() {
         <p>
           資工三甲 4A7G0094 朱紘緯
         </p>
-        <MyRGBPanel/>
-
-
-        <p>react第二個元件</p>
-        <h3>MyCalculator</h3>
-        <MyCalculator/>
-
-        <p>react第三個元件</p>
-        <h3>MyTicTacToe</h3>
-        <Tictactoe/>
-
-
-       
+        
+        <AudioFileList />
       </header>
     </div>
   );
