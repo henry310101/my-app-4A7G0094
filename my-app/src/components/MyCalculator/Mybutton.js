@@ -39,8 +39,8 @@ function Mybutton(props) {
                     <button className="btn zero" onClick={handleclick} value="0">0</button>
                     <button className="btn btn-number" onClick={handleclick} value=".">.</button>
                     <button className="btn btn-operator" onClick={handleclick} value="=">=</button>
-                    
                 </div>
+                
 
             </div>
         </div>

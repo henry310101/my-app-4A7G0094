@@ -61,7 +61,7 @@ function Tictactoe() {
             </div>
             <div className="game-info">
                 <h4 style={{ marginBottom: '5px' }}>遊戲歷程</h4>
-                <ul style={{ marginTop: '0', paddingLeft: '20px' }}>{moves}</ul>
+                <ol style={{ marginTop: '0', paddingLeft: '20px' }}>{moves}</ol>
             </div>
         </div>
     );
