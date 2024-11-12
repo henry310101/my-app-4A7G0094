@@ -15,7 +15,6 @@ function AudioFileList() {
         websocket.onopen = () => {
             console.log('Connected to WebSocket server');
         };
-
         websocket.onmessage = (event) => {
             const data = JSON.parse(event.data);
 
@@ -33,15 +32,12 @@ function AudioFileList() {
                 alert(data.error); // 顯示錯誤信息
             }
         };
-
         websocket.onclose = () => {
             console.log('WebSocket connection closed');
         };
-
         websocket.onerror = (error) => {
             console.log('WebSocket error:', error);
         };
-
         // 清理 WebSocket 連接
         return () => {
             websocket.close();
@@ -54,7 +50,6 @@ function AudioFileList() {
             alert("Please select an audio file to upload.");
             return;
         }
-
         const reader = new FileReader();
         reader.onload = () => {
             const base64Audio = reader.result.split(',')[1];
@@ -62,7 +57,6 @@ function AudioFileList() {
                 filename: selectedFile.name.replace(/\.[^/.]+$/, ""), // 去除副檔名
                 audioData: base64Audio, // 編碼後的音訊數據
             };
-
             if (ws && ws.readyState === WebSocket.OPEN) {
                 ws.send(JSON.stringify(data));
                 console.log("File sent to server");
@@ -85,28 +79,24 @@ function AudioFileList() {
 
     return (
         <div>
-            
-            
-            <h3>Upload New Audio File</h3>
+            <h3>上傳音檔</h3>
             <input 
                 type="file" 
                 accept="audio/*" 
                 onChange={(e) => setSelectedFile(e.target.files[0])}
             />
-            <button onClick={uploadFile}>Upload File</button>
-
+            <button onClick={uploadFile}>上傳音檔</button>
             {audioSrc && (
                 <div>
-                    <h3>Playing Audio</h3>
+                    <h3>撥放音檔</h3>
                     <audio controls src={audioSrc}></audio>
                 </div>
             )}
-
-            <h2>Audio Files in Folder</h2>
+            <h2>資料夾內的音檔</h2>
             <ul>
                 {audioFiles.map((file, index) => (
                     <li key={index}>
-                        {file} <button onClick={() => requestFile(file)}>Play</button>
+                        {file} <button onClick={() => requestFile(file)}>撥放</button>
                     </li>
                 ))}
             </ul>

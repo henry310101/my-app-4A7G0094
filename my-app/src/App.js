@@ -15,7 +15,6 @@ function App() {
         <p>
           資工三甲 4A7G0094 朱紘緯
         </p>
-        
         <AudioFileList />
       </header>
     </div>
