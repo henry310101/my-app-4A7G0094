@@ -1,12 +1,6 @@
 import React from 'react';
 import './App.css';
-import MyRGBPanel from './components/MyRGBPanel/MyRGBPanel'
-import MyCalculator from './components/MyCalculator/MyCalculator'
-import entersound from './components/DTW/entersound'
-import Tictactoe from './components/tic_tac_toe/Tictactoe'
-import WebSocketAudioUpload from './components/DTW/entersound';
 import AudioFileList from './components/WebSocket/AudioFileList';
-
 
 function App() {
   return (

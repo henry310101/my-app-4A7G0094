@@ -1,0 +1,52 @@
+/* 父容器樣式 */
+.audio-file-list {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+/* 標題樣式 */
+.audio-file-list h3,
+.audio-file-list h2 {
+    margin-top: 30px;
+}
+
+/* 錯誤訊息區塊 */
+.audio-file-list .error {
+    color: red;
+    margin-top: 10px;
+}
+
+.audio-file-list .error button {
+    background-color: lightgray;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+/* 播放區域樣式 */
+.audio-file-list .audio-player {
+    margin-top: 20px;
+}
+
+/* 音檔列表樣式 */
+.audio-file-list ul {
+    list-style: none;
+    padding: 0;
+    }
+
+.audio-file-list li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.audio-file-list li span {
+    flex: 1;
+}
+
+.audio-file-list li button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+}

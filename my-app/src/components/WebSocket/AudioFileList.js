@@ -1,135 +1,157 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 
 function AudioFileList() {
     const [audioFiles, setAudioFiles] = useState([]); // 音檔列表
-    const [selectedFile, setSelectedFile] = useState(null); // 選中的文件
     const [audioSrc, setAudioSrc] = useState(null); // 播放音檔的來源
-    const [ws, setWs] = useState(null); // WebSocket 連接
-    const [uploading, setUploading] = useState(false); // 文件上傳狀態
     const [error, setError] = useState(null); // 錯誤訊息
+    const [recording, setRecording] = useState(false); // 錄音狀態
+    const ws = useRef(null); // WebSocket 引用
 
-    // 建立 WebSocket 連接，支援自動重連
+    // 初始化 WebSocket
     useEffect(() => {
-        const connectWebSocket = () => {
-            const websocket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8000');
-            setWs(websocket);
+        ws.current = new WebSocket("ws://127.0.0.1:8001");
 
-            websocket.onopen = () => {
-                console.log('Connected to WebSocket server');
-            };
-
-            websocket.onmessage = (event) => {
-                try {
-                    const data = JSON.parse(event.data);
-                    if (data.audioData) {
-                        // 收到音檔數據並設置為播放來源
-                        const binaryString = atob(data.audioData);
-                        const bytes = Uint8Array.from(binaryString, char => char.charCodeAt(0));
-                        const audioBlob = new Blob([bytes], { type: data.mimeType || 'audio/wav' });
-                        const audioUrl = URL.createObjectURL(audioBlob);
-                        setAudioSrc(audioUrl);
-                    } else if (Array.isArray(data)) {
-                        setAudioFiles(data); // 更新音檔列表
-                    } else if (data.error) {
-                        setError(data.error); // 顯示錯誤信息
-                    }
-                } catch (e) {
-                    setError("Error parsing server response.");
-                }
-            };
-
-            websocket.onclose = () => {
-                console.log('WebSocket connection closed, attempting to reconnect...');
-                setTimeout(connectWebSocket, 5000); // 5秒後嘗試重新連接
-            };
-
-            websocket.onerror = (error) => {
-                console.log('WebSocket error:', error);
-            };
+        ws.current.onopen = () => {
+            console.log("WebSocket connection established");
         };
 
-        connectWebSocket();
+        ws.current.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                if (Array.isArray(data)) {
+                    // 更新音檔列表
+                    console.log("Updating audio file list:", data);
+                    setAudioFiles(data);
+                } else if (data.audioData) {
+                    // 更新音檔播放來源
+                    const binaryString = atob(data.audioData);
+                    const bytes = Uint8Array.from(binaryString, (char) =>
+                        char.charCodeAt(0)
+                    );
+                    const audioBlob = new Blob([bytes], {
+                        type: data.mimeType || "audio/wav",
+                    });
+                    setAudioSrc(URL.createObjectURL(audioBlob));
+                }
+            } catch (e) {
+                console.error("Error parsing WebSocket message:", e);
+                setError("Error parsing server response");
+            }
+        };
+
+        ws.current.onerror = (err) => {
+            console.error("WebSocket error:", err);
+            setError("WebSocket connection error.");
+        };
+
+        ws.current.onclose = () => {
+            console.log("WebSocket connection closed");
+        };
 
         return () => {
-            if (ws) ws.close();
+            if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+                ws.current.close();
+            }
         };
     }, []);
 
-    // 上傳文件的函數
-    const uploadFile = () => {
-        if (!selectedFile) {
-            alert("Please select an audio file to upload.");
-            return;
-        }
-        setUploading(true);
-        const reader = new FileReader();
-        reader.onload = () => {
-            const base64Audio = reader.result.split(',')[1];
-            const data = {
-                filename: selectedFile.name.replace(/\.[^/.]+$/, ""), // 去除副檔名
-                audioData: base64Audio, // 編碼後的音訊數據
-            };
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify(data));
-                console.log("File sent to server");
-            } else {
-                console.log("WebSocket connection is not open");
-            }
-            setUploading(false);
-        };
-        reader.readAsDataURL(selectedFile); // 讀取文件並轉換為 Base64
-    };
-
-    // 請求指定音檔的函數
+    // 撥放請求
     const requestFile = (filename) => {
-        if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({ request_file: filename }));
+        if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+            ws.current.send(JSON.stringify({ request_file: filename }));
             console.log(`Requested file: ${filename}`);
         } else {
-            console.log('WebSocket is not open');
+            console.log("WebSocket is not open");
         }
     };
 
+    // 錄音處理
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: true,
+            });
+            const mediaRecorder = new MediaRecorder(stream);
+            const chunks = [];
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    chunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(chunks, { type: "audio/wav" });
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64Audio = reader.result.split(",")[1];
+                    const data = {
+                        filename: `recording_${Date.now()}`,
+                        audioData: base64Audio,
+                    };
+                    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+                        ws.current.send(JSON.stringify(data));
+                        console.log("Audio sent");
+                    } else {
+                        console.error("WebSocket is not open");
+                    }
+                };
+                reader.readAsDataURL(audioBlob);
+            };
+
+            mediaRecorder.start();
+            setRecording(true);
+
+            // 停止錄音後處理
+            setTimeout(() => {
+                mediaRecorder.stop();
+                setRecording(false);
+            }, 3000); // 錄音 3 秒
+        } catch (err) {
+            console.error("Error starting recording:", err);
+            setError("Unable to access microphone");
+        }
+    };
+
+    const stopRecording = () => {
+        setRecording(false);
+    };
+
+    // 錯誤清除
+    const clearError = () => setError(null);
+
     return (
-        <div style={{ fontFamily: 'Arial, sans-serif', margin: '20px' }}>
-            <h3>上傳音檔</h3>
-            <input 
-                type="file" 
-                accept="audio/*" 
-                onChange={(e) => setSelectedFile(e.target.files[0])}
-            />
-            <button onClick={uploadFile} style={{ marginLeft: '10px' }}>上傳音檔</button>
-            {uploading && <p>上傳中...</p>}
-            
+        <div className="audio-file-list">
+            <div>
+                <button onClick={recording ? stopRecording : startRecording}>
+                    {recording ? "停止錄音" : "開始錄音"}
+                </button>
+            </div>
             {error && (
-                <div style={{ color: 'red', marginTop: '10px' }}>
+                <div className="error">
                     <p>{error}</p>
-                    <button onClick={() => setError(null)} style={{ backgroundColor: 'lightgray', border: 'none', padding: '5px 10px', cursor: 'pointer' }}>
-                        清除錯誤
-                    </button>
+                    <button onClick={clearError}>清除錯誤</button>
                 </div>
             )}
-
             {audioSrc && (
-                <div style={{ marginTop: '20px' }}>
+                <div className="audio-player">
                     <h3>撥放音檔</h3>
                     <audio controls src={audioSrc}></audio>
                 </div>
             )}
-
-            <h2 style={{ marginTop: '30px' }}>資料夾內的音檔</h2>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-                {audioFiles.map((file, index) => (
-                    <li key={index} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
-                        <span style={{ flex: 1 }}>{file}</span>
-                        <button 
-                            onClick={() => requestFile(file)} 
-                            style={{ marginLeft: '10px', padding: '5px 10px', cursor: 'pointer' }}>
-                            撥放
-                        </button>
-                    </li>
-                ))}
-            </ul>
+            <div>
+                <h2>音檔列表</h2>
+                <ul>
+                    {audioFiles.map((file, index) => (
+                        <li key={index}>
+                            <span>{file}</span>
+                            <button onClick={() => requestFile(file)}>
+                                撥放
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 }
