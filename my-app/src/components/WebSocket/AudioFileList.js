@@ -9,7 +9,7 @@ function AudioFileList() {
 
     // 初始化 WebSocket
     useEffect(() => {
-        ws.current = new WebSocket("ws://127.0.0.1:8001");
+        ws.current = new WebSocket('wss://2943-1-175-184-4.ngrok-free.app');
 
         ws.current.onopen = () => {
             console.log("WebSocket connection established");
