@@ -46,7 +46,9 @@ function Webspeek() {
           const data = JSON.parse(event.data);
           console.log("📡 收到訊息:", data);
           // 如果是一個陣列 => 檔案列表
+          
           if (Array.isArray(data)) {
+            // 這邊收到的data是一個陣列，裡面是音檔名稱，會傳進FileList.js
             setAudioFiles(data);
             console.log("audioFiles = ",data)
           }
