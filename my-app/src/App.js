@@ -6,12 +6,6 @@ import Login from "./components/WebSocket/Login";
 
 
 const App=() => {
-  const [loggedIn, setLoggedIn] = useState(false);
-
-  const handleLogin = () => {
-    setLoggedIn(true);
-  };
-
   return (
     <BrowserRouter basename="/my-app-4A7G0094">
     <Routes>

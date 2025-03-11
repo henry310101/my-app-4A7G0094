@@ -1,12 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import Recorder from "./Recorder";
 import FileList from "./FileList";
+import { useNavigate } from "react-router-dom";
 
 function Webspeek() {
   const [audioFiles, setAudioFiles] = useState([]); // 音檔列表
   const [audioSrc, setAudioSrc] = useState(null);   // 播放音檔
   const [dtwResult, setDtwResult] = useState(null); // 這裡放 DTW 結果(含圖片等)
   const ws = useRef(null);
+   const navigate = useNavigate(); // 🔹 獲取導向函式
+
+  const handleHome = () => {
+    navigate("/"); // ✅ 返回首頁
+  }
 
   // 安全傳訊息
   const safeSend = (data) => {
@@ -89,6 +95,11 @@ function Webspeek() {
   return (
     <div style={{ padding: "1rem" }}>
       <h2>WebSocket + 錄音 Demo</h2>
+      <ul>
+        <button className="home-button" onClick={handleHome}>
+          登出
+        </button>
+      </ul>
 
       {/* 錄音功能 */}
       <Recorder safeSend={safeSend} />

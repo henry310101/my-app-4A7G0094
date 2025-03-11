@@ -16,9 +16,19 @@ function Login() {
     }
   };
 
+  const handleHome = () => {
+    navigate("/"); // ✅ 返回首頁
+  }
+
+
   return (
     <div className="login-container">
       <h2>登入</h2>
+      <ul>
+      <button className="home-button" onClick={handleHome}>
+        返回首頁
+      </button>
+      </ul>
       {error && <p className="error-message">{error}</p>}
 
       <div className="input-group">
@@ -44,6 +54,7 @@ function Login() {
       <button className="login-button" onClick={handleLogin}>
         登入
       </button>
+
     </div>
   );
 }
