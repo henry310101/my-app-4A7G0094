@@ -48,7 +48,7 @@ function Auth({ loggedIn, onLogin, onLogout }) {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="輸入帳號"
+            placeholder="Account"
           />
         </div>
 
@@ -58,7 +58,7 @@ function Auth({ loggedIn, onLogin, onLogout }) {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="輸入密碼"
+            placeholder="Password"
           />
         </div>
 

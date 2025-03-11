@@ -33,7 +33,7 @@ const App = () => {
           element={loggedIn ? <WebSocket /> : <Navigate to="/" />}
         />
         <Route path="/files"
-          element={loggedIn ? <FilePage /> : <Navigate to="/" />} // 新增路由
+          element={loggedIn ? <FilePage /> : <Navigate to="/" />} 
         />
         <Route path="/Record"
           element={loggedIn ? <Record /> : <Navigate to="/" />}
