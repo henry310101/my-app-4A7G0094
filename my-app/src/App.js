@@ -6,6 +6,7 @@ import Homepage from "./components/WebSocket/Homepage";
 import WebSocket from './components/WebSocket/WebSocket';
 import Navbar from "./components/WebSocket/Navbar";
 import FilePage from "./components/WebSocket/FilePage";
+import Record from "./components/WebSocket/Record";
 
 const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -33,6 +34,9 @@ const App = () => {
         />
         <Route path="/files"
           element={loggedIn ? <FilePage /> : <Navigate to="/" />} // 新增路由
+        />
+        <Route path="/Record"
+          element={loggedIn ? <Record /> : <Navigate to="/" />}
         />
         <Route path="*"
           element={loggedIn ? <Navigate to="/Webspeek" /> : <Navigate to="/" />}

@@ -17,7 +17,9 @@ const Navbar = ({ onLogout }) => {
         <li><Link to="/Homepage">首頁</Link></li>
         <li><Link to="/Webspeek">語音評級</Link></li>
         <li><Link to="/files">檔案管理</Link></li>
+        <li><Link to="/Record">記錄</Link></li>
         <li><Link onClick={handleLogout}>登出</Link></li>
+        
       </ul>
     </nav>
   );
