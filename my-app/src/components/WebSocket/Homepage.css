@@ -1,0 +1,23 @@
+/* src/components/WebSocket/Homepage.css */
+
+.homepage-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    text-align: center;
+    font-family: sans-serif;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  
+  .homepage-container h1 {
+    margin-bottom: 1rem;
+  }
+  
+  .homepage-container p {
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
