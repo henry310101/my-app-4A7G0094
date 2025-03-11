@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './App.css';
 import Webspeek from './components/WebSocket/Webspeek';
 import Login from "./components/WebSocket/Login";
 
-function App() {
+
+const App=() => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const handleLogin = () => {
@@ -11,18 +13,13 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-          {loggedIn ? (
-        // 如果已登入，顯示 Webspeek 畫面
-        <Webspeek />
-      ) : (
-        // 否則顯示登入畫面
-        <Login onLogin={handleLogin} />
-      )}
+    <BrowserRouter basename="/my-app-4A7G0094">
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/Webspeek" element={<Webspeek />} />
+    </Routes>
+  </BrowserRouter>
 
-      </header>
-    </div>
   );
 }
 
