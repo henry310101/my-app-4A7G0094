@@ -10,8 +10,9 @@
   }
   
   .input-group {
-    margin-bottom: 1rem;
+    margin-bottom: 10px;
     text-align: left;
+    border-radius: 12px;
   }
   
   .auth-container label {
@@ -30,13 +31,27 @@
   .auth-button {
     display: inline-block;
     cursor: pointer;
-    padding: 0.6rem 1.2rem;
+    padding: 10px 20px;
     border: none;
-    border-radius: 4px;
+    border-radius: 12px;
     background-color: #4285f4;
     color: #fff;
     font-size: 1rem;
     transition: background-color 0.3s ease;
+  }
+
+  .auth-button1{
+    display: inline-block;
+    cursor: pointer;
+    padding: 10px 20px;
+    
+    border: none;
+    border-radius: 12px;
+    background-color: #4285f4;
+    color: #fff;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    
   }
   
   .auth-button:hover {
@@ -44,7 +59,8 @@
   }
   
   .error-message {
-    color: red;
+    color: rgb(205, 100, 51);
+    font-size: 20px;
     margin-bottom: 1rem;
   }
   
