@@ -1,7 +1,7 @@
 // src/components/WebSocket/Auth.js
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Auth.css"; // 可用同一份 CSS
+import "./Auth.css";
 
 function Auth({ loggedIn, onLogin, onLogout }) {
   const [username, setUsername] = useState("");
@@ -22,13 +22,6 @@ function Auth({ loggedIn, onLogin, onLogout }) {
       // 接收到後端傳來的訊息
       try {
         const data = JSON.parse(event.data);
-        // 假設後端在驗證完帳號密碼後，回傳的格式是：
-        // {
-        //   "type": "login_response",
-        //   "login_status": "success" or "fail",
-        //   "message": "...",
-        //   "user_id": 1 // (如果你後端也會回傳 user_id )
-        // }
         if (data.type === "login_response") {
           if (data.login_status === "success") {
             // 登入成功
@@ -80,7 +73,6 @@ function Auth({ loggedIn, onLogin, onLogout }) {
         password
       })
     );
-    // 注意：這裡不再用前端寫死 if (username===... && password===...) 直接判定
     // 交給後端 SQL 去驗證
   };
 
@@ -89,6 +81,11 @@ function Auth({ loggedIn, onLogin, onLogout }) {
     onLogout();   // 通知父元件 => setLoggedIn(false)
     navigate("/"); // 返回首頁 (或登入頁)
   };
+
+  // 註冊頁面
+  const handleRegister = () => {
+    navigate("/Register");
+  }
 
   // 根據 `loggedIn` 顯示不同畫面
   if (loggedIn) {
@@ -126,7 +123,7 @@ function Auth({ loggedIn, onLogin, onLogout }) {
         <table>
           <tr>
             <td>{error && <p className="error-message">{error}</p>}</td>
-            <td><button className="auth-button1" onClick={handleLogin}>
+            <td><button className="auth-button1" onClick={handleRegister}>
               註冊
             </button>
             </td>

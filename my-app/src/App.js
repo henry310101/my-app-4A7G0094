@@ -7,6 +7,7 @@ import WebSocket from './components/WebSocket/WebSocket';
 import Navbar from "./components/WebSocket/Navbar";
 import FilePage from "./components/WebSocket/FilePage";
 import Record from "./components/WebSocket/Record";
+import Register from "./components/WebSocket/Register";
 
 const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -37,6 +38,9 @@ const App = () => {
         />
         <Route path="/Record"
           element={loggedIn ? <Record /> : <Navigate to="/" />}
+        />
+        <Route path="/Register"
+          element={!loggedIn ? <Register /> : <Navigate to="/Homepage" />}
         />
         <Route path="*"
           element={loggedIn ? <Navigate to="/Webspeek" /> : <Navigate to="/" />}
