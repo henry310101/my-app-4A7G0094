@@ -13,6 +13,7 @@ const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const handleLogin = () => {
+    
     setLoggedIn(true);
   };
 
@@ -40,10 +41,10 @@ const App = () => {
           element={loggedIn ? <Record /> : <Navigate to="/" />}
         />
         <Route path="/Register"
-          element={!loggedIn ? <Register /> : <Navigate to="/Homepage" />}
+          element={!loggedIn ? <Register /> : <Navigate to="/" />}
         />
         <Route path="*"
-          element={loggedIn ? <Navigate to="/Webspeek" /> : <Navigate to="/" />}
+          element={<Navigate to="/" />}
         />
       </Routes>
     </BrowserRouter>

@@ -26,6 +26,7 @@ function Auth({ loggedIn, onLogin, onLogout }) {
           if (data.login_status === "success") {
             // 登入成功
             console.log(data.message); // 後端的提示訊息
+            alert("登入成功");
             onLogin();                 // 通知父元件 => setLoggedIn(true)
             navigate("/Homepage");     // 導向成功後的頁面
           } else {
@@ -73,13 +74,6 @@ function Auth({ loggedIn, onLogin, onLogout }) {
         password
       })
     );
-    // 交給後端 SQL 去驗證
-  };
-
-  // 登出邏輯
-  const handleLogout = () => {
-    onLogout();   // 通知父元件 => setLoggedIn(false)
-    navigate("/"); // 返回首頁 (或登入頁)
   };
 
   // 註冊頁面
@@ -88,16 +82,6 @@ function Auth({ loggedIn, onLogin, onLogout }) {
   }
 
   // 根據 `loggedIn` 顯示不同畫面
-  if (loggedIn) {
-    return (
-      <div className="auth-container">
-        <h2>登出</h2>
-        <button className="auth-button" onClick={handleLogout}>
-          登出
-        </button>
-      </div>
-    );
-  } else {
     return (
       <div className="auth-container">
         <h2>登入</h2>
@@ -137,6 +121,5 @@ function Auth({ loggedIn, onLogin, onLogout }) {
       </div>
     );
   }
-}
 
 export default Auth;

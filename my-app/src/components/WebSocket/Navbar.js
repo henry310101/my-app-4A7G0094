@@ -7,6 +7,7 @@ const Navbar = ({ onLogout }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    alert("登出成功");
     onLogout();
     navigate("/");
   };
