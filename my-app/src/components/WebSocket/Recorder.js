@@ -1,11 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
+import { UserContext } from "../../App";
 
 function Recorder({ safeSend }) {
+  const { userId } = useContext(UserContext);
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef(null);
 
   // 開始錄音
   const startRecording = async () => {
+    
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
@@ -16,12 +20,13 @@ function Recorder({ safeSend }) {
           chunks.push(event.data);
         }
       };
-
+      
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(chunks, { type: "audio/webm" });
         const arrayBuffer = await audioBlob.arrayBuffer();
         const uint8Array = new Uint8Array(arrayBuffer);
-        safeSend(uint8Array);
+        console.log("userID:",userId);
+        safeSend(uint8Array,userId);
         console.log("✅ 錄音已發送");
       };
 

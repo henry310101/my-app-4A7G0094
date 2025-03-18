@@ -1,6 +1,8 @@
 // src/components/WebSocket/FilePage.js
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import "./FilePage.css"; // 匯入統一的 CSS
+import { UserContext } from "../../App";
+
 
 function FilePage() {
   // === State ===
@@ -8,24 +10,24 @@ function FilePage() {
   const [audioSrc, setAudioSrc] = useState(null);   // 播放音檔
   const [wsError, setWsError] = useState(null);     // WebSocket 錯誤訊息
   const ws = useRef(null);
+  const { userId } = useContext(UserContext); // 取得 user_id
 
   // === WebSocket ===
   useEffect(() => {
     ws.current = new WebSocket("ws://localhost:8765");
-
     ws.current.onopen = () => {
       console.log("WebSocket 連線成功 (FilePage)");
       requestFileList(); // 一開啟就請求音檔列表
     };
-
     ws.current.onmessage = (event) => {
       if (typeof event.data === "string") {
         try {
           const data = JSON.parse(event.data);
           console.log("📡 收到訊息:", data);
-
           // 若是陣列 => 音檔列表
           if (Array.isArray(data)) {
+            console.log("音檔列表:", data);
+            console.log("userId：", userId);
             setAudioFiles(data);
           } 
           // 你可在此處處理其他 JSON 資料，例如錯誤訊息...
@@ -79,9 +81,8 @@ function FilePage() {
   return (
     <div className="file-page-container">
       <h2>總音檔</h2>
-
-      {wsError && <p className="error-text">WebSocket 錯誤: {wsError}</p>}
-
+      {/* 顯示錯誤訊息，如果wsError錯誤內容，才會顯示 */}
+      {wsError && <p className="error-text">WebSocket 錯誤: {wsError}</p>} 
       {/* 播放音檔 */}
       {audioSrc && (
         <div className="audio-player">
