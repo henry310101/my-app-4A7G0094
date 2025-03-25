@@ -1,54 +1,69 @@
 /* Webspeek.css */
 
-/* 1. 基本容器樣式 */
+/* -------------------------------
+   1. 基本容器樣式
+-------------------------------- */
 .container {
-  max-width: 600px;   /* 限制寬度，防止整個畫面太寬 */
-  margin: 2rem auto;  /* 置中，並在上方留點距離 */
-  padding: 1.5rem;
-  background-color: #f9f9f9; /* 淺色底 */
-  border-radius: 8px; /* 圓角 */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 陰影 */
-  font-family: sans-serif; /* 字體 */
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: sans-serif;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* 2. 標題樣式 */
+/* -------------------------------
+   2. 標題樣式
+-------------------------------- */
 .container h1 {
-  margin-bottom: 0.5rem;
-  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+  font-size: 2rem;
   text-align: center;
   letter-spacing: 1px;
+  color: #333;
+  font-weight: 600;
 }
 
-/* 3. 副標題樣式 */
+/* 可視需要調整或刪除 h2, h3 等標題的樣式 */
 .container h2 {
-  margin-bottom: 1rem;
-  font-size: 1.3rem;
+  margin-bottom: 1.2rem;
+  font-size: 1.2rem;
   text-align: center;
-  color: #666; 
+  color: #666;
 }
 
-/* 4. DTW 結果容器 */
+/* -------------------------------
+   3. DTW 結果容器
+-------------------------------- */
 .dtw-result {
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 1rem;
-  margin-top: 1rem;
-  background-color: #fff; /* 與外框稍微區分 */
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin-top: 1.5rem;
+  background-color: #fff;
+  transition: box-shadow 0.3s ease;
+}
+.dtw-result:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* 5. DTW 結果標題 */
+/* DTW 結果標題 */
 .dtw-result h3 {
   margin-top: 0;
-  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  color: #444;
 }
 
-/* 6. DTW 內容排版 */
+/* DTW 內容排版 */
 .dtw-result p {
-  margin: 0.25rem 0;
+  margin: 0.4rem 0;
   line-height: 1.5;
+  color: #555;
 }
 
-/* 7. DTW 圖片樣式 */
+/* DTW 圖片樣式 */
 .dtw-result img {
   max-width: 100%;
   margin-top: 1rem;
@@ -57,19 +72,47 @@
   margin-right: auto;
 }
 
-/* 8. 錄音按鈕或其他按鈕的簡易樣式 (如果需要) */
+/* -------------------------------
+   4. 按鈕樣式
+-------------------------------- */
 button {
+  display: inline-block;
   cursor: pointer;
-  padding: 0.6rem 1rem;
-  margin-top: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  margin-top: 0.8rem;
   border: none;
   border-radius: 4px;
-  background-color: #4285f4; /* 你可改成其他顏色 */
+  background: #4285f4;
   color: #fff;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
-  background-color: #306bc4;
+  background: #306bc4;
+  transform: translateY(-1px);
+}
+
+button:active {
+  background: #2956a3;
+  transform: translateY(1px);
+}
+
+/* -------------------------------
+   5. 手機相容 (RWD)
+-------------------------------- */
+@media (max-width: 768px) {
+  .container {
+    margin: 1.5rem auto;
+    padding: 1.5rem;
+  }
+
+  .container h1 {
+    font-size: 1.6rem;
+  }
+
+  .dtw-result {
+    padding: 1rem;
+  }
 }

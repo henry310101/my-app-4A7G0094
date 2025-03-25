@@ -74,26 +74,24 @@ function FilePage() {
 
   // === 請求播放某檔音檔 ===
   const requestFile = (filename) => {
+    console.log("請求播放音檔:", filename);
     safeSend(JSON.stringify({ request_file: filename }));
   };
 
   // === 畫面 ===
   return (
     <div className="file-page-container">
-      <h2>總音檔</h2>
       {/* 顯示錯誤訊息，如果wsError錯誤內容，才會顯示 */}
       {wsError && <p className="error-text">WebSocket 錯誤: {wsError}</p>} 
       {/* 播放音檔 */}
       {audioSrc && (
         <div className="audio-player">
-          <h3>音檔播放</h3>
           <audio controls src={audioSrc}></audio>
         </div>
       )}
 
       {/* 音檔列表 */}
       <div className="file-list">
-        <h3>音檔列表</h3>
         {audioFiles.length === 0 ? (
           <p>目前沒有音檔</p>
         ) : (
