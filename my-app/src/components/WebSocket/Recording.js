@@ -1,15 +1,15 @@
 // Webspeek.js
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { UserContext } from "../../App"; // 若有用到 userId，就留著
+import "./Recording.css";
 
-function Webspeek() {
+function Recording() {
   const { userId } = useContext(UserContext);
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef(null);
   const [dtwResult, setDtwResult] = useState(null);
   const ws = useRef(null);
 
-  // ★ 建立 WebSocket 連線
   useEffect(() => {
     ws.current = new WebSocket("ws://localhost:8765");
     ws.current.onopen = () => {
@@ -17,11 +17,9 @@ function Webspeek() {
     };
 
     ws.current.onmessage = (event) => {
-      // 伺服器回傳的資料若是文字類型，嘗試解析 JSON
       if (typeof event.data === "string") {
         try {
           const data = JSON.parse(event.data);
-          // 有 image_data 就更新 DTW 結果
           if (data.image_data) {
             setDtwResult(data);
           }
@@ -30,16 +28,12 @@ function Webspeek() {
         }
       }
     };
-
     ws.current.onerror = (err) => {
       console.error("Webspeek 錯誤:", err);
     };
-
     ws.current.onclose = () => {
       console.log("Webspeek 已關閉");
     };
-
-    // 離開頁面或元件卸載時，若連線還開著則關閉
     return () => {
       if (ws.current && ws.current.readyState === WebSocket.OPEN) {
         ws.current.close();
@@ -47,14 +41,8 @@ function Webspeek() {
     };
   }, []);
 
-  // ★ 封裝安全送出訊息的函式
-  //   - 可依伺服器需求來做 JSON 包裝或二進位傳送
   const safeSend = (audioData, userId) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-      // 1) 如果伺服器需要純二進位：
-      // ws.current.send(audioData);
-
-      // 2) 如果伺服器需要 JSON (同時傳送 userId & 音訊):
       const message = {
         userId: userId,
         audio: Array.from(audioData), // 或者做 Base64 編碼
@@ -67,7 +55,6 @@ function Webspeek() {
     }
   };
 
-  // ★ 開始錄音
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -133,4 +120,4 @@ function Webspeek() {
   );
 }
 
-export default Webspeek;
+export default Recording;

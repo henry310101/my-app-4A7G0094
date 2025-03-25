@@ -42,11 +42,9 @@ function Auth({ onLogin }) {
         console.error("解析訊息時發生錯誤:", err);
       }
     };
-
     ws.current.onerror = (err) => {
       console.error("Webspeek 錯誤:", err);
     };
-
     ws.current.onclose = () => {
       console.log("Webspeek 已關閉");
     };
@@ -58,7 +56,8 @@ function Auth({ onLogin }) {
       }
     };
   }, [onLogin, navigate]);
-  // ---------------送資料給後端----------------
+
+  //送資料給後端
   const safeSend = (data) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(data);

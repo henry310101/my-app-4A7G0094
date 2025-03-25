@@ -11,7 +11,7 @@ function FilePage() {
   const [wsError, setWsError] = useState(null);     // WebSocket 錯誤訊息
   const ws = useRef(null);
   const { userId } = useContext(UserContext); // 取得 user_id
-
+  console.log("userId：", userId);
   // === WebSocket ===
   useEffect(() => {
     ws.current = new WebSocket("ws://localhost:8765");
@@ -27,7 +27,7 @@ function FilePage() {
           // 若是陣列 => 音檔列表
           if (Array.isArray(data)) {
             console.log("音檔列表:", data);
-            console.log("userId：", userId);
+            
             setAudioFiles(data);
           } 
           // 你可在此處處理其他 JSON 資料，例如錯誤訊息...

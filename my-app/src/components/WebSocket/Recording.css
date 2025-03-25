@@ -1,8 +1,4 @@
-/* Webspeek.css */
-
-/* -------------------------------
-   1. 基本容器樣式
--------------------------------- */
+/* Recording.css */
 .container {
   max-width: 600px;
   margin: 2rem auto;
@@ -13,9 +9,7 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* -------------------------------
-   2. 標題樣式
--------------------------------- */
+
 .container h1 {
   margin-bottom: 0.8rem;
   font-size: 2rem;
@@ -25,7 +19,7 @@
   font-weight: 600;
 }
 
-/* 可視需要調整或刪除 h2, h3 等標題的樣式 */
+
 .container h2 {
   margin-bottom: 1.2rem;
   font-size: 1.2rem;
@@ -33,9 +27,6 @@
   color: #666;
 }
 
-/* -------------------------------
-   3. DTW 結果容器
--------------------------------- */
 .dtw-result {
   border: 1px solid #e1e1e1;
   border-radius: 8px;
@@ -48,7 +39,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* DTW 結果標題 */
+
 .dtw-result h3 {
   margin-top: 0;
   margin-bottom: 0.5rem;
@@ -56,14 +47,14 @@
   color: #444;
 }
 
-/* DTW 內容排版 */
+
 .dtw-result p {
   margin: 0.4rem 0;
   line-height: 1.5;
   color: #555;
 }
 
-/* DTW 圖片樣式 */
+
 .dtw-result img {
   max-width: 100%;
   margin-top: 1rem;
@@ -72,9 +63,6 @@
   margin-right: auto;
 }
 
-/* -------------------------------
-   4. 按鈕樣式
--------------------------------- */
 button {
   display: inline-block;
   cursor: pointer;
@@ -99,9 +87,7 @@ button:active {
   transform: translateY(1px);
 }
 
-/* -------------------------------
-   5. 手機相容 (RWD)
--------------------------------- */
+
 @media (max-width: 768px) {
   .container {
     margin: 1.5rem auto;
