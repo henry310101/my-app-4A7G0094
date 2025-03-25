@@ -17,6 +17,27 @@ function Register() {
       ws.current.onopen = () => {
         console.log("WebSocket 連線成功 (FilePage)");
       };
+      ws.current.onmessage = (event) => {
+        if (typeof event.data === "string") {
+          try {
+            const data = JSON.parse(event.data);
+            console.log("📡 收到訊息:", data)
+            if (data.type === "register_response") {
+              if (data.status === "success") {
+                console.log(data.message); // 後端提示訊息
+                alert("註冊成功");
+              } 
+              else if (data.status === "fail") {
+                console.error(data.message);
+                setError("帳號或密碼錯誤");
+              }
+            }
+          } catch (err) {
+            console.warn("JSON 解析失敗:", err);
+          }
+        }
+      };
+
       ws.current.onerror = (err) => {
         console.error("WebSocket 錯誤 (FilePage):", err);
         setWsError(err.toString());

@@ -1,7 +1,9 @@
-import React, {useEffect, useRef}from "react";
+import React, {useEffect, useRef, useContext}from "react";
 import "./Record.css";
+import { UserContext } from "../../App";
 
 const Record = () => {
+    const { userId } = useContext(UserContext); // 取得 user_id
     const ws = useRef(null);
     ws.current = new WebSocket("ws://localhost:8765");
     const requestRecord = () => {

@@ -1,8 +1,22 @@
 import React, { useState, useRef, useContext } from "react";
+import { UserContext } from "../../App";
+
+// 把 ArrayBuffer 轉成 Base64 的小工具函式
+function arrayBufferToBase64(buffer) {
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  // btoa 可以把原生的 binary 字串轉成 Base64
+  return btoa(binary);
+}
 
 function Recorder({ safeSend }) {
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef(null);
+  const { userId } = useContext(UserContext);
 
   // 開始錄音
   const startRecording = async () => {
@@ -20,9 +34,17 @@ function Recorder({ safeSend }) {
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(chunks, { type: "audio/webm" });
         const arrayBuffer = await audioBlob.arrayBuffer();
-        const uint8Array = new Uint8Array(arrayBuffer);
-        safeSend(uint8Array);
-        console.log("✅ 錄音已發送");
+        const audioBase64 = arrayBufferToBase64(arrayBuffer);
+
+        const message = {
+          request: "audioBase64",
+          userId: userId,
+          audioBase64: audioBase64,
+        };
+
+        // 把整個 message 轉成字串後，送給 safeSend
+        safeSend(JSON.stringify(message));
+        console.log("✅ 錄音已發送 (Base64)");
       };
 
       mediaRecorderRef.current = mediaRecorder;
