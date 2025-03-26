@@ -1,43 +1,50 @@
-// src/components/WebSocket/FilePage.js
 import React, { useState, useEffect, useRef, useContext } from "react";
-import "./FilePage.css"; // 匯入統一的 CSS
+import "./FilePage.css";
 import { UserContext } from "../../App";
-
 
 function FilePage() {
   // === State ===
-  const [audioFiles, setAudioFiles] = useState([]); // 音檔列表
-  const [audioSrc, setAudioSrc] = useState(null);   // 播放音檔
-  const [wsError, setWsError] = useState(null);     // WebSocket 錯誤訊息
+  const [audioFiles, setAudioFiles] = useState([]); 
+  // const [audioSrc, setAudioSrc] = useState(null);  // <-- 不再需要這個
+  const [wsError, setWsError] = useState(null);
   const ws = useRef(null);
-  const { userId } = useContext(UserContext); // 取得 user_id
+  const { userId } = useContext(UserContext);
+
+  // 1) 建立另一個 ref 來綁定 audio 標籤
+  const audioRef = useRef(null);
 
   // === WebSocket ===
   useEffect(() => {
     ws.current = new WebSocket("ws://localhost:8765");
+
     ws.current.onopen = () => {
       console.log("WebSocket 連線成功 (FilePage)");
-      requestFileList(); // 一開啟就請求音檔列表
+      requestFileList(); 
     };
+
     ws.current.onmessage = (event) => {
       if (typeof event.data === "string") {
+        // 文字訊息(例如檔名列表)
         try {
           const data = JSON.parse(event.data);
           console.log("📡 收到訊息:", data);
-          // 若是陣列 => 音檔列表
+
           if (Array.isArray(data)) {
-            console.log("音檔列表:", data);
-            console.log("userId：", userId);
             setAudioFiles(data);
-          } 
-          // 你可在此處處理其他 JSON 資料，例如錯誤訊息...
+          }
         } catch (err) {
           console.warn("JSON 解析失敗:", err);
         }
       } else {
-        // 二進位 => 播放音檔
+        // 2) 收到二進位 -> 播放音檔
         const blob = new Blob([event.data], { type: "audio/wav" });
-        setAudioSrc(URL.createObjectURL(blob));
+        const objectURL = URL.createObjectURL(blob);
+
+        // 3) 透過 ref 設定同一個 <audio> src
+        if (audioRef.current) {
+          audioRef.current.src = objectURL;
+          audioRef.current.play();
+        }
       }
     };
 
@@ -50,7 +57,6 @@ function FilePage() {
       console.log("WebSocket 已關閉 (FilePage)");
     };
 
-    // 離開時關閉連線
     return () => {
       if (ws.current && ws.current.readyState === WebSocket.OPEN) {
         ws.current.close();
@@ -67,44 +73,56 @@ function FilePage() {
     }
   };
 
-  // === 請求音檔列表 ===
+  // 請求音檔列表
   const requestFileList = () => {
     safeSend(JSON.stringify({ request: "file_list" }));
   };
 
-  // === 請求播放某檔音檔 ===
+  // 請求播放某檔音檔
   const requestFile = (filename) => {
     console.log("請求播放音檔:", filename);
+    // 告訴後端需要傳該檔案的二進位資料
     safeSend(JSON.stringify({ request_file: filename }));
   };
 
-  // === 畫面 ===
   return (
     <div className="file-page-container">
-      {/* 顯示錯誤訊息，如果wsError錯誤內容，才會顯示 */}
-      {wsError && <p className="error-text">WebSocket 錯誤: {wsError}</p>} 
-      {/* 播放音檔 */}
-      {audioSrc && (
-        <div className="audio-player">
-          <audio controls src={audioSrc}></audio>
-        </div>
-      )}
+      {wsError && <p className="error-text">WebSocket 錯誤: {wsError}</p>}
 
-      {/* 音檔列表 */}
-      <div className="file-list">
-        {audioFiles.length === 0 ? (
-          <p>目前沒有音檔</p>
-        ) : (
-          <ul>
+      {/* 
+        4) 只保留一個 <audio>，並用 ref 連結。
+        加上 controls 以顯示播放條，也可以拿掉 controls 或用 CSS 隱藏 
+      */}
+      <audio ref={audioRef} />
+
+      <h2>音檔列表</h2>
+      {audioFiles.length === 0 ? (
+        <p>目前沒有音檔</p>
+      ) : (
+        <table className="file-table">
+          <thead>
+            <tr>
+              <th>檔名</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
             {audioFiles.map((filename, idx) => (
-              <li key={idx}>
-                <span>{filename}</span>
-                <button onClick={() => requestFile(filename)}>播放</button>
-              </li>
+              <tr key={idx}>
+                <td>{filename}</td>
+                <td>
+                  <button onClick={() => requestFile(filename)}>
+                    <image
+                  
+                  
+                    />
+                  </button>
+                </td>
+              </tr>
             ))}
-          </ul>
-        )}
-      </div>
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }

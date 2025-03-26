@@ -1,6 +1,6 @@
 // WebSocket.js
 import React, { useEffect, useRef, useState } from "react";
-import "./WebSocket.css";
+import "./Reresult.css";
 import Recorder from "./Recorder";
 
 function Webspeek() {

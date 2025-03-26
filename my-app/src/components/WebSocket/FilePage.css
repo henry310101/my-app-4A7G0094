@@ -1,70 +1,61 @@
-/* src/components/WebSocket/FilePage.css */
+/* FilePage.css */
 
-/* 外層容器 */
+/* 容器相關 */
 .file-page-container {
   max-width: 600px;
-  margin: 2rem auto;
-  padding: 1rem;
-  font-family: sans-serif;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin: auto;
+  padding: 20px;
 }
 
-/* 錯誤文字 */
+/* 錯誤訊息 */
 .error-text {
   color: red;
-  margin-bottom: 1rem;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
-/* 播放器容器 */
+/* 播放器區塊 */
 .audio-player {
-  margin-bottom: 1rem;
+  margin: 10px 0;
+  text-align: center;
+}
+
+/* 表格本體 */
+.file-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
   background-color: #fff;
-  border-radius: 6px;
-  padding: 1rem;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
 }
 
-/* 音檔列表 */
-.file-list {
-  margin-top: 1rem;
-  background-color: #fff;
-  border-radius: 6px;
-  padding: 1rem;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
+.file-table th,
+.file-table td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: middle;
 }
 
-.file-list ul {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
+/* 表頭底色 */
+.file-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
 }
 
-.file-list li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; 
-  margin-bottom: 0.5rem;
+/* 偶數列底色 */
+.file-table tr:nth-child(even) {
+  background-color: #fafafa;
 }
 
-.file-list li span {
-  font-size: 0.95rem;
-  color: #333;
-}
-
-/* 按鈕 */
-button {
+/* 操作按鈕 */
+.file-table button {
   cursor: pointer;
-  padding: 0.5rem 0.8rem;
-  border: none;
-  border-radius: 4px;
-  background-color: #4285f4;
-  color: #fff;
-  font-size: 0.85rem;
-  transition: background-color 0.3s ease;
+  padding: 6px 12px;
+  border: 1px solid #888;
+  background-color: #eee;
+  transition: background-color 0.2s ease;
 }
 
-button:hover {
-  background-color: #306bc4;
+.file-table button:hover {
+  background-color: #ddd;
 }

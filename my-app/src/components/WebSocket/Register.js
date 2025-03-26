@@ -1,4 +1,4 @@
-import React, { useState, useRef,useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Register.css";
 
@@ -8,92 +8,87 @@ function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
-  const [wsError, setWsError] = useState(null);
   const navigate = useNavigate();
   const ws = useRef(null);
 
   useEffect(() => {
-      ws.current = new WebSocket("ws://localhost:8765");
-      ws.current.onopen = () => {
-        console.log("WebSocket 連線成功 (FilePage)");
-      };
-      ws.current.onmessage = (event) => {
-        if (typeof event.data === "string") {
-          try {
-            const data = JSON.parse(event.data);
-            console.log("📡 收到訊息:", data)
-            if (data.type === "register_response") {
-              if (data.status === "success") {
-                console.log(data.message); // 後端提示訊息
-                alert("註冊成功");
-              } 
-              else if (data.status === "fail") {
-                console.error(data.message);
-                setError("帳號或密碼錯誤");
-              }
-            }
-          } catch (err) {
-            console.warn("JSON 解析失敗:", err);
-          }
-        }
-      };
+    ws.current = new WebSocket("ws://localhost:8765");
 
-      ws.current.onerror = (err) => {
-        console.error("WebSocket 錯誤 (FilePage):", err);
-        setWsError(err.toString());
-      };
-  
-      ws.current.onclose = () => {
-        console.log("WebSocket 已關閉 (FilePage)");
-      };
-  
-      // 離開時關閉連線
-      return () => {
-        if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-          ws.current.close();
+    ws.current.onopen = () => {
+      console.log("✅ WebSocket 連線成功 (RegisterPage)");
+    };
+
+    ws.current.onmessage = (event) => {
+      if (typeof event.data === "string") {
+        try {
+          const data = JSON.parse(event.data);
+          console.log("📡 收到訊息:", data);
+
+          if (data.type === "register_response") {
+            if (data.status === "success") {
+              setError("");
+              alert("註冊成功！");
+              // 清空表單
+              setUsername("");
+              setPassword("");
+              setConfirmPassword("");
+              navigate("/");
+
+            } else if (data.status === "fail") {
+              setError(data.message || "註冊失敗");
+              setInfo("");
+            }
+          }
+        } catch (err) {
+          console.warn("JSON 解析失敗:", err);
         }
-      };
-    }, []);
-  
-    // 安全傳送訊息
-    const safeSend = (data) => {
-      if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-        ws.current.send(data);
-      } else {
-        console.error("❌ WebSocket 未開啟，無法發送訊息");
       }
     };
-      
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      if (password !== confirmPassword) {
-        setError("兩次密碼輸入不一致，請再試一次！");
-        setInfo("");
-        return;
+
+    ws.current.onerror = (err) => {
+      console.error("WebSocket 錯誤 (RegisterPage):", err);
+    };
+
+    ws.current.onclose = () => {
+      console.log("WebSocket 已關閉 (RegisterPage)");
+    };
+
+    return () => {
+      if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+        ws.current.close();
       }
-      // 清空錯誤、顯示提示
-      setError("");
-      setInfo(`帳號：${username} 已提交註冊！`);
-    
-      // 直接呼叫 safeSend
-      safeSend(JSON.stringify({
+    };
+  }, []);
+
+  // 安全傳送訊息
+  const safeSend = (data) => {
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      ws.current.send(data);
+    } else {
+      console.error("❌ WebSocket 未開啟，無法發送訊息");
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setError("❗ 兩次密碼輸入不一致，請再試一次！");
+      setInfo("");
+      return;
+    }
+    setError("");
+    safeSend(
+      JSON.stringify({
         request: "register_account",
         username,
-        password
-      }));
-    
-      // 也可以改成 alert/或做其他UI操作...
-      navigate("/");
-    
-      // 成功後清空表單
-      setUsername("");
-      setPassword("");
-      setConfirmPassword("");
-    };
+        password,
+      })
+    );
+  };
 
-    const onlogin = () =>{
-      navigate("/")
-    }
+  const onLogin = () => {
+    navigate("/");
+  };
 
   return (
     <div className="register-container">
@@ -108,7 +103,6 @@ function Register() {
           <input
             type="text"
             id="username"
-            name="username"
             required
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -120,7 +114,6 @@ function Register() {
           <input
             type="password"
             id="password"
-            name="password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -132,19 +125,18 @@ function Register() {
           <input
             type="password"
             id="confirmPassword"
-            name="confirmPassword"
             required
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
-        <table>
-          <tr>
-            <td><button type="submit" >註冊</button></td>
-            <td><button onClick={onlogin} >返回</button></td>
-          </tr>
-        </table>
-        
+
+        <div className="button-group">
+          <button type="submit">註冊</button>
+          <button type="button" onClick={onLogin}>
+            返回
+          </button>
+        </div>
       </form>
     </div>
   );
