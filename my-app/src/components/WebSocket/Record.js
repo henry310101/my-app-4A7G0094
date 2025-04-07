@@ -56,8 +56,6 @@ const Record = () => {
   return (
     <div className="Record_container">
       <h1>Record List</h1>
-      <button onClick={requestRecord}>刷新列表</button>
-
       {recordList.length === 0 ? (
         <p>目前尚無記錄</p>
       ) : (
