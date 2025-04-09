@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import "./FilePage.css";
 import { UserContext } from "../../App";
+import playerImage from '../images/player.png';
 
 function FilePage() {
   // === State ===
@@ -81,20 +82,15 @@ function FilePage() {
   // 請求播放某檔音檔
   const requestFile = (filename) => {
     console.log("請求播放音檔:", filename);
-    // 告訴後端需要傳該檔案的二進位資料
+
+  // 告訴後端需要傳該檔案的二進位資料
     safeSend(JSON.stringify({ request_file: filename }));
   };
 
   return (
     <div className="file-page-container">
       {wsError && <p className="error-text">WebSocket 錯誤: {wsError}</p>}
-
-      {/* 
-        4) 只保留一個 <audio>，並用 ref 連結。
-        加上 controls 以顯示播放條，也可以拿掉 controls 或用 CSS 隱藏 
-      */}
       <audio ref={audioRef} />
-
       <h2>音檔列表</h2>
       {audioFiles.length === 0 ? (
         <p>目前沒有音檔</p>
@@ -112,9 +108,10 @@ function FilePage() {
                 <td>{filename}</td>
                 <td>
                   <button onClick={() => requestFile(filename)}>
-                    <image
-                  
-                  
+                    <img
+                      src = {playerImage}
+                      className="player-image"
+                      alt="播放音檔"
                     />
                   </button>
                 </td>

@@ -55,7 +55,7 @@ const Record = () => {
 
   return (
     <div className="Record_container">
-      <h1>Record List</h1>
+      <h1>紀錄</h1>
       {recordList.length === 0 ? (
         <p>目前尚無記錄</p>
       ) : (
