@@ -8,7 +8,6 @@ const Record = () => {
   const [recordList, setRecordList] = useState([]);
 
   useEffect(() => {
-    // 在初始渲染時才建立一次 WebSocket
     ws.current = new WebSocket("ws://localhost:8765");
 
     // 連線成功後，請求音檔列表
