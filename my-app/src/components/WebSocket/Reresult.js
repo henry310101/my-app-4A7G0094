@@ -1,22 +1,16 @@
-// Webspeek.js
+// Webspeek.js (部分程式)
 import React, { useState, useEffect, useRef } from "react";
 import "./Reresult.css";
-
-function arrayBufferToBase64(buffer) {
-  let binary = "";
-  const bytes = new Uint8Array(buffer);
-  const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-}
 
 function Webspeek() {
   const [dtwResult, setDtwResult] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
 
-  // 錄音相關 state & ref
+  // 新增：題目
+  const [selectedTopic, setSelectedTopic] = useState("lesson1"); 
+  // 這裡預設帶 "lesson1"，或可以是空字串 "", 由使用者選
+
+  // 錄音相關
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef(null);
 
@@ -47,7 +41,7 @@ function Webspeek() {
     };
   }, []);
 
-  // 封裝 WebSocket 傳送
+  // WebSocket 傳送包裝
   const safeSend = (data) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(data);
@@ -56,7 +50,7 @@ function Webspeek() {
     }
   };
 
-  // ===== 錄音功能 =====
+  // --- 錄音功能 ---
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -72,13 +66,15 @@ function Webspeek() {
         const audioBlob = new Blob(chunks, { type: "audio/webm" });
         const arrayBuffer = await audioBlob.arrayBuffer();
         const audioBase64 = arrayBufferToBase64(arrayBuffer);
+        
+        // 送給後端時，帶上「題目」
         const message = {
           request: "audioBase64",
           userId: "guestUser",
-          audioBase64,
+          topic: selectedTopic,        //  <-- 新增題目資訊
+          audioBase64: audioBase64,
         };
         safeSend(JSON.stringify(message));
-        console.log("✅ 錄音已發送 (Base64)");
       };
 
       mediaRecorderRef.current = mediaRecorder;
@@ -96,7 +92,7 @@ function Webspeek() {
     }
   };
 
-  // ===== 檔案上傳功能 =====
+  // --- 檔案上傳功能 ---
   const handleFileSelect = (e) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
@@ -115,6 +111,7 @@ function Webspeek() {
       const message = {
         request: "audioBase64",
         userId: "guestUser",
+        topic: selectedTopic,        //  <-- 同樣帶題目
         audioBase64: base64String,
       };
       safeSend(JSON.stringify(message));
@@ -126,9 +123,18 @@ function Webspeek() {
     <div className="container">
       <h1>語音評級</h1>
 
-      {/* 同一行容器 */}
+      {/* 這裡可以是一個下拉選單或簡單輸入框，讓使用者選題目 */}
+      <div style={{ marginBottom: "1rem" }}>
+        <label>選擇題目：</label>
+        <select value={selectedTopic} onChange={(e) => setSelectedTopic(e.target.value)}>
+          <option value="lesson1">Lesson1</option>
+          <option value="lesson2">Lesson2</option>
+          <option value="lesson3">Lesson3</option>
+        </select>
+      </div>
+
       <div className="action-row">
-        {/* 錄音按鈕 */}
+        {/* 錄音 */}
         <button onClick={recording ? stopRecording : startRecording}>
           {recording ? "停止錄音" : "開始錄音"}
         </button>
@@ -146,12 +152,13 @@ function Webspeek() {
         <label htmlFor="real-file" className="custom-file-upload">
           選擇檔案
         </label>
-        <span style={{ marginLeft: "10px" }}>
-         {selectedFile ? selectedFile.name : "尚未選擇檔案"}
-        </span>
 
+        <span style={{ marginLeft: "10px", fontSize: "30px" }}>
+          {selectedFile ? selectedFile.name : "尚未選擇檔案"}
+        </span>
       </div>
 
+      {/* 結果顯示 */}
       {dtwResult && (
         <div className="dtw-result">
           <h3>DTW 比對結果</h3>
@@ -168,3 +175,14 @@ function Webspeek() {
 }
 
 export default Webspeek;
+
+// 小工具：將 ArrayBuffer 轉成 Base64
+function arrayBufferToBase64(buffer) {
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}

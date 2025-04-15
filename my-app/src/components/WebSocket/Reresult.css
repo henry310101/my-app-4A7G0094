@@ -34,12 +34,13 @@
   display: none;
 }
 
-/* 自訂按鈕 (共用) */
+/* 讓 .custom-file-upload 與 button 都用同一套樣式 */
 button, 
 .custom-file-upload {
   display: inline-block;
   cursor: pointer;
   padding: 0.6rem 1.2rem;
+  margin: 0;              /* 讓預設 margin 保持一致 */
   border: none;
   border-radius: 4px;
   background: #4285f4;
@@ -49,17 +50,20 @@ button,
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
+/* hover 效果 */
 button:hover,
 .custom-file-upload:hover {
   background: #306bc4;
   transform: translateY(-1px);
 }
 
+/* active 狀態 */
 button:active,
 .custom-file-upload:active {
   background: #2956a3;
   transform: translateY(1px);
 }
+
 
 /* DTW 結果 */
 .dtw-result {
