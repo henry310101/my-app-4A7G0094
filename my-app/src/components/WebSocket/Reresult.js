@@ -111,7 +111,7 @@ function Webspeek() {
       const message = {
         request: "audioBase64",
         userId: "guestUser",
-        topic: selectedTopic,        //  <-- 同樣帶題目
+        ref: selectedTopic,        //  <-- 同樣帶題目
         audioBase64: base64String,
       };
       safeSend(JSON.stringify(message));
@@ -127,9 +127,8 @@ function Webspeek() {
       <div style={{ marginBottom: "1rem" }}>
         <label>選擇題目：</label>
         <select value={selectedTopic} onChange={(e) => setSelectedTopic(e.target.value)}>
-          <option value="lesson1">Lesson1</option>
-          <option value="lesson2">Lesson2</option>
-          <option value="lesson3">Lesson3</option>
+          <option value="cook">cook</option>
+          <option value="git">git</option>
         </select>
       </div>
 
