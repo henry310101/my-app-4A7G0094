@@ -1,8 +1,6 @@
 /* Webspeek.css */
 
-/* -------------------------------
-   1. 基本容器樣式
--------------------------------- */
+/* 容器 */
 .container {
   max-width: 600px;
   margin: 2rem auto;
@@ -13,9 +11,7 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* -------------------------------
-   2. 標題樣式
--------------------------------- */
+/* 標題 */
 .container h1 {
   margin-bottom: 0.8rem;
   font-size: 2rem;
@@ -25,17 +21,47 @@
   font-weight: 600;
 }
 
-/* 可視需要調整或刪除 h2, h3 等標題的樣式 */
-.container h2 {
-  margin-bottom: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  color: #666;
+/* 同一行容器 (Flex) */
+.action-row {
+  display: flex;
+  gap: 10px;          
+  align-items: center;
+  margin-top: 1rem;
 }
 
-/* -------------------------------
-   3. DTW 結果容器
--------------------------------- */
+/* 隱藏預設的 file input */
+#real-file {
+  display: none;
+}
+
+/* 自訂按鈕 (共用) */
+button, 
+.custom-file-upload {
+  display: inline-block;
+  cursor: pointer;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  background: #4285f4;
+  color: #fff;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover,
+.custom-file-upload:hover {
+  background: #306bc4;
+  transform: translateY(-1px);
+}
+
+button:active,
+.custom-file-upload:active {
+  background: #2956a3;
+  transform: translateY(1px);
+}
+
+/* DTW 結果 */
 .dtw-result {
   border: 1px solid #e1e1e1;
   border-radius: 8px;
@@ -47,72 +73,8 @@
 .dtw-result:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
-
-/* DTW 結果標題 */
-.dtw-result h3 {
-  margin-top: 0;
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
-  color: #444;
-}
-
-/* DTW 內容排版 */
-.dtw-result p {
-  margin: 0.4rem 0;
-  line-height: 1.5;
-  color: #555;
-}
-
-/* DTW 圖片樣式 */
 .dtw-result img {
   max-width: 100%;
-  margin-top: 1rem;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* -------------------------------
-   4. 按鈕樣式
--------------------------------- */
-button {
-  display: inline-block;
-  cursor: pointer;
-  padding: 0.6rem 1.2rem;
-  margin-top: 0.8rem;
-  border: none;
-  border-radius: 4px;
-  background: #4285f4;
-  color: #fff;
-  font-size: 1rem;
-  letter-spacing: 0.5px;
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-button:hover {
-  background: #306bc4;
-  transform: translateY(-1px);
-}
-
-button:active {
-  background: #2956a3;
-  transform: translateY(1px);
-}
-
-/* -------------------------------
-   5. 手機相容 (RWD)
--------------------------------- */
-@media (max-width: 768px) {
-  .container {
-    margin: 1.5rem auto;
-    padding: 1.5rem;
-  }
-
-  .container h1 {
-    font-size: 1.6rem;
-  }
-
-  .dtw-result {
-    padding: 1rem;
-  }
+  margin: 1rem auto 0 auto;
 }

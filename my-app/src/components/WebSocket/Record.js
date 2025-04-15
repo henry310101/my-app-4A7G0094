@@ -61,7 +61,7 @@ const Record = () => {
         <table className="record-table">
           <thead>
             <tr>
-              <th>上傳檔案</th>
+              <th>檢測題目</th>
               <th>最佳比對</th>
               <th>分數</th>
               <th>距離</th>
