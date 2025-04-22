@@ -1,49 +1,93 @@
 import React, { useEffect, useRef, useContext, useState } from "react";
 import "./Record.css";
 import { UserContext } from "../../App";
+import { Chart, BarElement, BarController,CategoryScale, LinearScale, Tooltip, Title, Legend } from "chart.js";
+
+Chart.register(BarController,BarElement,CategoryScale,LinearScale,Tooltip,Title,Legend);
 
 const Record = () => {
-  const { userId } = useContext(UserContext); // 取得 user_id
+  const { userId } = useContext(UserContext);
   const ws = useRef(null);
+  const chartRef = useRef(null);
+  const chartInstance = useRef(null); // Chart 實例
   const [recordList, setRecordList] = useState([]);
 
   useEffect(() => {
     ws.current = new WebSocket("ws://localhost:8765");
 
-    // 連線成功後，請求音檔列表
     ws.current.onopen = () => {
       console.log("WebSocket 連線成功 (Record)");
-      console.log("userId=%d", userId);
       requestRecord();
     };
 
-    // 監聽來自後端的訊息
     ws.current.onmessage = (event) => {
       if (typeof event.data === "string") {
         const data = JSON.parse(event.data);
-        console.log("📡 收到訊息:", data);
-
-        // 如果後端有回傳 { type: 'record', records: [...] }
         if (data.type === "record") {
           setRecordList(data.records || []);
-          console.log("✅ recordList 更新了：", data.records);
         }
       }
     };
 
     return () => {
-      if (ws.current) {
-        ws.current.close();
-      }
+      ws.current?.close();
     };
   }, []);
 
-  // 向後端請求紀錄列表
+  useEffect(() => {
+    if (recordList.length === 0 || !chartRef.current) return;
+
+    const labels = recordList.map((r, i) => `${r.uploaded_file}→${r.best_match}`);
+    const scores = recordList.map((r) => r.score);
+
+    const data = {
+      labels,
+      datasets: [
+        {
+          label: "分數",
+          data: scores,
+          backgroundColor: "rgba(54, 162, 235, 0.7)",
+          borderRadius: 5,
+        },
+      ],
+    };
+
+    const config = {
+      type: "bar",
+      data,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: "top" },
+          title: {
+            display: true,
+            text: "發音評分紀錄",
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: "分數",
+            },
+          },
+        },
+      },
+    };
+
+    // 銷毀舊圖表
+    if (chartInstance.current) {
+      chartInstance.current.destroy();
+    }
+
+    chartInstance.current = new Chart(chartRef.current, config);
+  }, [recordList]);
+
   const requestRecord = () => {
     safeSend(JSON.stringify({ request: "record", userId }));
   };
 
-  // 安全送出訊息
   const safeSend = (data) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(data);
@@ -55,6 +99,13 @@ const Record = () => {
   return (
     <div className="Record_container">
       <h1>紀錄</h1>
+
+      {/* 圖表顯示 */}
+      <div style={{ width: "100%", maxWidth: "900px", margin: "auto", paddingBottom: "30px" }}>
+        <canvas ref={chartRef} />
+      </div>
+
+      {/* 表格顯示 */}
       {recordList.length === 0 ? (
         <p>目前尚無記錄</p>
       ) : (

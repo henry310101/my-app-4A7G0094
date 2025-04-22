@@ -5,13 +5,11 @@ import playerImage from '../images/player.png';
 
 function FilePage() {
   // === State ===
-  const [audioFiles, setAudioFiles] = useState([]); 
-  // const [audioSrc, setAudioSrc] = useState(null);  // <-- 不再需要這個
+  const [audioFiles, setAudioFiles] = useState([]);
   const [wsError, setWsError] = useState(null);
   const ws = useRef(null);
   const { userId } = useContext(UserContext);
 
-  // 1) 建立另一個 ref 來綁定 audio 標籤
   const audioRef = useRef(null);
 
   // === WebSocket ===
@@ -20,12 +18,11 @@ function FilePage() {
 
     ws.current.onopen = () => {
       console.log("WebSocket 連線成功 (FilePage)");
-      requestFileList(); 
+      requestFileList();
     };
 
     ws.current.onmessage = (event) => {
       if (typeof event.data === "string") {
-        // 文字訊息(例如檔名列表)
         try {
           const data = JSON.parse(event.data);
           console.log("📡 收到訊息:", data);
@@ -37,11 +34,9 @@ function FilePage() {
           console.warn("JSON 解析失敗:", err);
         }
       } else {
-        // 2) 收到二進位 -> 播放音檔
         const blob = new Blob([event.data], { type: "audio/wav" });
         const objectURL = URL.createObjectURL(blob);
 
-        // 3) 透過 ref 設定同一個 <audio> src
         if (audioRef.current) {
           audioRef.current.src = objectURL;
           audioRef.current.play();
@@ -65,7 +60,6 @@ function FilePage() {
     };
   }, []);
 
-  // 安全傳送訊息
   const safeSend = (data) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(data);
@@ -74,52 +68,68 @@ function FilePage() {
     }
   };
 
-  // 請求音檔列表
   const requestFileList = () => {
     safeSend(JSON.stringify({ request: "file_list" }));
   };
 
-  // 請求播放某檔音檔
   const requestFile = (filename) => {
     console.log("請求播放音檔:", filename);
-
-  // 告訴後端需要傳該檔案的二進位資料
     safeSend(JSON.stringify({ request_file: filename }));
   };
+
+  // === 分組邏輯 ===
+  const vowelGroups = {
+    a: [], e: [], i: [], o: [], u: []
+  };
+
+  audioFiles.forEach((filename) => {
+    const firstChar = filename[0].toLowerCase();
+    if (vowelGroups[firstChar]) {
+      vowelGroups[firstChar].push(filename);
+    }
+  });
 
   return (
     <div className="file-page-container">
       {wsError && <p className="error-text">WebSocket 錯誤: {wsError}</p>}
       <audio ref={audioRef} />
       <h2>音檔列表</h2>
-      {audioFiles.length === 0 ? (
-        <p>目前沒有音檔</p>
-      ) : (
-        <table className="file-table">
-          <thead>
-            <tr>
-              <th>檔名</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            {audioFiles.map((filename, idx) => (
-              <tr key={idx}>
-                <td>{filename}</td>
-                <td>
-                  <button onClick={() => requestFile(filename)}>
-                    <img
-                      src = {playerImage}
-                      className="player-image"
-                      alt="播放音檔"
-                    />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+
+      <div className="vowel-groups">
+        {Object.entries(vowelGroups).map(([vowel, files]) => (
+          <div className="vowel-group" key={vowel}>
+            <h3>{vowel.toUpperCase()}</h3>
+            {files.length === 0 ? (
+              <p>無檔案</p>
+            ) : (
+              <table className="file-table">
+                <thead>
+                  <tr>
+                    <th>檔名</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {files.map((filename, idx) => (
+                    <tr key={idx}>
+                      <td>{filename.replace(/^.*?_/, '').replace(/\.wav$/, '')}</td>
+                      <td>
+                        <button onClick={() => requestFile(filename)}>
+                          <img
+                            src={playerImage}
+                            className="player-image"
+                            alt="播放音檔"
+                          />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

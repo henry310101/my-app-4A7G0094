@@ -30,3 +30,7 @@ button {
 .record-table tr:nth-child(even) {
   background-color: #fafafa; /* 偶數列底色 */
 }
+
+canvas {
+  max-width: 100%;
+}
