@@ -3,13 +3,13 @@ import "./FilePage.css";
 import { UserContext } from "../../App";
 import playerImage from '../images/player.png';
 
+
 function FilePage() {
   // === State ===
   const [audioFiles, setAudioFiles] = useState([]);
   const [wsError, setWsError] = useState(null);
   const ws = useRef(null);
   const { userId } = useContext(UserContext);
-
   const audioRef = useRef(null);
 
   // === WebSocket ===
@@ -74,10 +74,18 @@ function FilePage() {
 
   const requestFile = (filename) => {
     console.log("請求播放音檔:", filename);
-    safeSend(JSON.stringify({ request_file: filename }));
+    safeSend(JSON.stringify({ request: "filename" }));
   };
 
   // === 分組邏輯 ===
+  const Titles = {
+    a: "清音子音 + 母音",
+    e: "濁音子音 + 母音",
+    i: "子音 + 短母音",
+    o: "子音 + 雙母音",
+    u: "子音 + R 母音"
+  };
+
   const vowelGroups = {
     a: [], e: [], i: [], o: [], u: []
   };
@@ -98,7 +106,7 @@ function FilePage() {
       <div className="vowel-groups">
         {Object.entries(vowelGroups).map(([vowel, files]) => (
           <div className="vowel-group" key={vowel}>
-            <h3>{vowel.toUpperCase()}</h3>
+            <h3>{Titles[vowel]}</h3>
             {files.length === 0 ? (
               <p>無檔案</p>
             ) : (
@@ -106,7 +114,7 @@ function FilePage() {
                 <thead>
                   <tr>
                     <th>檔名</th>
-                    <th>操作</th>
+                    <th>播放</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -1,87 +1,115 @@
-// Webspeek.js (部分程式)
-import React, { useState, useEffect, useRef } from "react";
+// Webspeek.js
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { UserContext } from "../../App";
 import "./Reresult.css";
 
-function Webspeek() {
+export default function Webspeek() {
+  const { userId } = useContext(UserContext);
+
+  // DTW 結果
   const [dtwResult, setDtwResult] = useState(null);
+  // 上傳用檔案
   const [selectedFile, setSelectedFile] = useState(null);
-
-  // 新增：題目
-  const [selectedTopic, setSelectedTopic] = useState("lesson1"); 
-  // 這裡預設帶 "lesson1"，或可以是空字串 "", 由使用者選
-
-  // 錄音相關
+  // 從後端拿到的「題目」清單
+  const [topicList, setTopicList] = useState([]);
+  const [selectedTopic, setSelectedTopic] = useState("");
+  // 錄音控制
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef(null);
 
+  // WebSocket
   const ws = useRef(null);
 
   useEffect(() => {
     ws.current = new WebSocket("ws://localhost:8765");
+
     ws.current.onopen = () => {
-      console.log("WebSocket 連線成功 (Webspeek)");
+      console.log("Webspeek WS open");
+      // 啟動後先向後端要一次檔案列表
+      requestFileList();
     };
+
     ws.current.onmessage = (event) => {
+      // 後端回傳一定是文字
+      let data;
       try {
-        const data = JSON.parse(event.data);
-        if (data.image_data) {
-          setDtwResult(data);
-        }
+        data = JSON.parse(event.data);
       } catch (e) {
-        console.warn("JSON 解析失敗:", e);
+        console.warn("WS JSON parse failed:", e);
+        return;
+      }
+
+      // 如果是陣列，就當成檔案列表來處理
+      if (Array.isArray(data)) {
+        // 去掉 .wav 後綴
+        const topics = data.map((fn) => fn.replace(/\.wav$/i, "").replace(/^.*?_/, ''));
+        setTopicList(topics);
+        // 若還沒選過預設，就自動選第一個
+        if (!selectedTopic && topics.length > 0) {
+          setSelectedTopic(topics[0]);
+        }
+        return;
+      }
+
+      // 否則若帶有 image_data，當做 DTW 結果
+      if (data.image_data) {
+        setDtwResult(data);
       }
     };
-    ws.current.onerror = (err) => console.error("Webspeek 錯誤:", err);
-    ws.current.onclose = () => console.log("Webspeek 已關閉");
+
+    ws.current.onerror = (err) => console.error("Webspeek WS error:", err);
+    ws.current.onclose = () => console.log("Webspeek WS closed");
 
     return () => {
+      // cleanup
       if (ws.current && ws.current.readyState === WebSocket.OPEN) {
         ws.current.close();
       }
     };
-  }, []);
+  }, [selectedTopic]);
 
-  // WebSocket 傳送包裝
-  const safeSend = (data) => {
+  // 安全發送
+  const safeSend = (msg) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-      ws.current.send(data);
-    } else {
-      console.error("❌ WebSocket 未開啟，無法發送訊息");
+      ws.current.send(msg);
     }
   };
 
-  // --- 錄音功能 ---
+  const requestFileList = () => {
+    safeSend(JSON.stringify({ request: "file_list" }));
+  };
+
+  // --- 錄音流程 ---
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      const mr = new MediaRecorder(stream, { mimeType: "audio/webm" });
       const chunks = [];
 
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          chunks.push(event.data);
-        }
+      mr.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
       };
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(chunks, { type: "audio/webm" });
-        const arrayBuffer = await audioBlob.arrayBuffer();
-        const audioBase64 = arrayBufferToBase64(arrayBuffer);
-        
-        // 送給後端時，帶上「題目」
-        const message = {
-          request: "audioBase64",
-          userId: "guestUser",
-          topic: selectedTopic,        //  <-- 新增題目資訊
-          audioBase64: audioBase64,
-        };
-        safeSend(JSON.stringify(message));
+      mr.onstop = async () => {
+        const blob = new Blob(chunks, { type: "audio/webm" });
+        const arrayBuffer = await blob.arrayBuffer();
+        const base64 = arrayBufferToBase64(arrayBuffer);
+
+        // 發送給後端，帶上選定的題目
+        safeSend(
+          JSON.stringify({
+            request: "audioBase64",
+            userId,
+            ref: selectedTopic,
+            audioBase64: base64,
+          })
+        );
       };
 
-      mediaRecorderRef.current = mediaRecorder;
-      mediaRecorder.start();
+      mediaRecorderRef.current = mr;
+      mr.start();
       setRecording(true);
     } catch (err) {
-      console.error("❌ 錄音錯誤:", err);
+      console.error("錄音錯誤:", err);
     }
   };
 
@@ -92,7 +120,7 @@ function Webspeek() {
     }
   };
 
-  // --- 檔案上傳功能 ---
+  // --- 檔案上傳流程 ---
   const handleFileSelect = (e) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
@@ -101,20 +129,21 @@ function Webspeek() {
 
   const handleFileUpload = () => {
     if (!selectedFile) {
-      console.warn("未選擇任何檔案");
+      console.warn("未選擇檔案");
       return;
     }
     const reader = new FileReader();
-    reader.onload = (event) => {
-      const dataURL = event.target.result;
-      const base64String = dataURL.split(",")[1];
-      const message = {
-        request: "audioBase64",
-        userId: "guestUser",
-        ref: selectedTopic,        //  <-- 同樣帶題目
-        audioBase64: base64String,
-      };
-      safeSend(JSON.stringify(message));
+    reader.onload = (e) => {
+      const dataURL = e.target.result;
+      const base64 = dataURL.split(",")[1];
+      safeSend(
+        JSON.stringify({
+          request: "audioBase64",
+          userId,
+          ref: selectedTopic,
+          audioBase64: base64,
+        })
+      );
     };
     reader.readAsDataURL(selectedFile);
   };
@@ -123,25 +152,30 @@ function Webspeek() {
     <div className="container">
       <h1>語音評級</h1>
 
-      {/* 這裡可以是一個下拉選單或簡單輸入框，讓使用者選題目 */}
+      {/* 動態產生題目下拉 */}
       <div style={{ marginBottom: "1rem" }}>
         <label>選擇題目：</label>
-        <select value={selectedTopic} onChange={(e) => setSelectedTopic(e.target.value)}>
-          <option value="cook">cook</option>
-          <option value="git">git</option>
+        <select
+          value={selectedTopic}
+          onChange={(e) => setSelectedTopic(e.target.value)}
+        >
+          {topicList.length === 0 ? (
+            <option disabled>載入中…</option>
+          ) : (
+            topicList.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))
+          )}
         </select>
       </div>
 
       <div className="action-row">
-        {/* 錄音 */}
         <button onClick={recording ? stopRecording : startRecording}>
           {recording ? "停止錄音" : "開始錄音"}
         </button>
-
-        {/* 上傳檔案 */}
         <button onClick={handleFileUpload}>上傳檔案</button>
-
-        {/* 隱藏 input */}
         <input
           id="real-file"
           type="file"
@@ -151,17 +185,14 @@ function Webspeek() {
         <label htmlFor="real-file" className="custom-file-upload">
           選擇檔案
         </label>
-
-        <span style={{ marginLeft: "10px", fontSize: "30px" }}>
+        <span style={{ marginLeft: 10, fontSize: 20 }}>
           {selectedFile ? selectedFile.name : "尚未選擇檔案"}
         </span>
       </div>
 
-      {/* 結果顯示 */}
       {dtwResult && (
         <div className="dtw-result">
           <h3>DTW 比對結果</h3>
-          <p>最相近檔案: {dtwResult.best_match}</p>
           <p>距離: {dtwResult.distance}</p>
           <p>得分: {dtwResult.score}</p>
           {dtwResult.image_data && (
@@ -173,14 +204,11 @@ function Webspeek() {
   );
 }
 
-export default Webspeek;
-
-// 小工具：將 ArrayBuffer 轉成 Base64
+// 小工具：ArrayBuffer → Base64
 function arrayBufferToBase64(buffer) {
   let binary = "";
   const bytes = new Uint8Array(buffer);
-  const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
+  for (let i = 0; i < bytes.byteLength; i++) {
     binary += String.fromCharCode(bytes[i]);
   }
   return btoa(binary);
