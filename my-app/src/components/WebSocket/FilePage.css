@@ -11,7 +11,7 @@
 /* 標題 */
 .file-page-container h2 {
   text-align: center;
-  font-size: 2rem;
+  font-size: 35px;
   margin-bottom: 24px;
   color: #2c3e50;
 }
@@ -40,7 +40,7 @@
   background: linear-gradient(135deg, #4a90e2, #357ab8);
   color: white;
   text-align: center;
-  font-size: 1.1rem;
+  font-size: 20px;
 }
 
 /* 表格整體 */
@@ -55,7 +55,7 @@
 .file-table thead th {
   padding: 10px 16px;
   text-align: left;
-  font-size: 0.9rem;
+  font-size: 20px;
   color: #555;
   text-transform: uppercase;
 }
@@ -70,7 +70,7 @@
   padding: 12px 16px;
   vertical-align: middle;
   border: none;
-  font-size: 0.95rem;
+  font-size: 20px;
   color: #444;
 }
 
