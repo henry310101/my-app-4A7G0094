@@ -60,10 +60,10 @@ const Record = () => {
         responsive: true,
         plugins: {
           legend: { position: "top" },
-          title: {display: true, text: "發音評分紀錄"}
+          title: {display: true, text: "評分紀錄"}
         },
         scales: {
-          y: {beginAtZero: true, title: {display: true,text: "分數"} },
+          y: {beginAtZero: true, title: "分數" },
         }
       }
     };

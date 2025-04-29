@@ -74,7 +74,10 @@ function FilePage() {
 
   const requestFile = (filename) => {
     console.log("請求播放音檔:", filename);
-    safeSend(JSON.stringify({ request: "filename" }));
+    safeSend(JSON.stringify({ 
+      request: "filename" ,
+      filename: filename 
+    }));
   };
 
   // === 分組邏輯 ===

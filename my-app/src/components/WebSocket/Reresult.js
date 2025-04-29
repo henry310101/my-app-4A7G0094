@@ -10,7 +10,7 @@ export default function Webspeek() {
   const [dtwResult, setDtwResult] = useState(null);
   // 上傳用檔案
   const [selectedFile, setSelectedFile] = useState(null);
-  // 從後端拿到的「題目」清單
+  // 從後端拿到的題目清單
   const [topicList, setTopicList] = useState([]);
   const [selectedTopic, setSelectedTopic] = useState("");
   // 錄音控制
@@ -120,13 +120,13 @@ export default function Webspeek() {
     }
   };
 
-  // --- 檔案上傳流程 ---
+  //檔案上傳流程
   const handleFileSelect = (e) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
     }
   };
-
+  //選擇檔案後，讀取檔案內容並轉換為 Base64
   const handleFileUpload = () => {
     if (!selectedFile) {
       console.warn("未選擇檔案");
