@@ -1,36 +1,176 @@
+/* Record.css */
+
+/* ========== 整體容器 Card 風格 ========== */
 .Record_container {
-  padding: 20px;
-  max-width: 800px; /* 可依需求更改 */
-  margin: 0 auto;
+  max-width:     900px;
+  margin:        40px auto;
+  padding:       24px;
+  background:    #ffffff;
+  border-radius: 16px;
+  box-shadow:    0 8px 24px rgba(0, 0, 0, 0.05);
+  font-family:   'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color:         #2c3e50;
 }
 
-button {
-  margin-bottom: 10px;
+.Record_container h1 {
+  margin:     0 0 24px;
+  font-size:  30px;
+  text-align: center;
+  color:      #34495e;
 }
 
+/* ========== 圖表區塊 ========== */
+.Record_container > div:first-of-type {
+  background:    #f9fbfc;
+  padding:       16px;
+  border-radius: 12px;
+  box-shadow:    inset 0 2px 4px rgba(0, 0, 0, 0.02);
+  margin-bottom: 32px;
+}
+
+canvas {
+  width:  100%  !important;
+  height: auto  !important;
+}
+
+/* ========== 隱藏原生音訊控制 ========== */
+audio {
+  display: none;
+}
+
+/* ========== 播放按鈕 ========== */
+.playimgage {
+  width:           40px;
+  height:          40px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  background:      #e74c3c;
+  border-radius:   50%;
+  box-shadow:      0 2px 6px rgba(0, 0, 0, 0.15);
+  transition:      transform 0.15s ease, background 0.15s ease;
+  cursor:          pointer;
+}
+
+.playimgage img {
+  width:  20px;
+  height: 20px;
+}
+
+.playimgage:hover {
+  background: #c0392b;
+  transform:  scale(1.1);
+}
+
+.playimgage:active {
+  transform:  scale(0.9);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ========== 表格外層 Card-wrapper ========== */
+.table-card {
+  overflow:      hidden;                   /* 讓圓角生效 */
+  border-radius: 12px;
+  box-shadow:    0 4px 16px rgba(0, 0, 0, 0.05);
+  margin-bottom: 32px;
+}
+
+.table-card .record-table {
+  width:            100%;
+  border-collapse:  collapse;  /* 讓表頭背景延伸到兩側 */
+  border-spacing:   0;
+}
+
+/* ========== 桌機版：正常 Table 排版 ========== */
 .record-table {
-  width: 100%;
-  border-collapse: collapse; /* 合併邊框 */
-  margin-top: 10px;
-  background-color: #fff;
+  width:            100%;
+  border-collapse:  separate;
+  border-spacing:   0 12px;   /* 每列之間留白 */
+  display:          table;
+}
+
+.record-table thead {
+  display: table-header-group;
+}
+
+.record-table tbody {
+  display: table-row-group;
+}
+
+.record-table tr {
+  display:     table-row;
+  background:  none;  /* 桌機版不使用卡片背景 */
+  box-shadow:  none;
 }
 
 .record-table th,
 .record-table td {
-  border: 1px solid #ccc;
-  padding: 8px 12px;
-  text-align: left;
+  display:        table-cell;
+  padding:        12px 16px;
+  vertical-align: middle;
+  border:         none;
+  font-size:  20px;
+  color:          #333;
+  text-align: center;
 }
 
+/* ========== 表頭樣式 ========== */
 .record-table th {
-  background-color: #f2f2f2; /* 表頭底色 */
-  font-weight: bold;
+  background:      #4a90e2;  /* 純色藍 */
+  color:           #fff;
+  font-weight:     600;
+  text-transform:  uppercase;
+  font-size:       20px;
+  padding:         12px 16px;
 }
 
-.record-table tr:nth-child(even) {
-  background-color: #fafafa; /* 偶數列底色 */
+/* 左右圓角 */
+.record-table thead th:first-child {
+  border-top-left-radius:  12px;
+}
+.record-table thead th:last-child {
+  border-top-right-radius: 12px;
 }
 
-canvas {
-  max-width: 100%;
+/* ========== 交替列底色 ========== */
+.record-table tbody tr:nth-child(even) {
+  background-color: #fafbfc;
+}
+
+/* ========== 手機版 (≤600px)：卡片式一行一列 ========== */
+@media (max-width: 600px) {
+  .record-table,
+  .record-table thead,
+  .record-table tbody,
+  .record-table th,
+  .record-table td,
+  .record-table tr {
+    display: block;
+  }
+
+  /* 隱藏桌機版表頭 */
+  .record-table thead {
+    display: none;
+  }
+
+  /* 每筆記錄變成卡片 */
+  .record-table tbody tr {
+    margin-bottom:   16px;
+    background:      #fff;
+    box-shadow:      0 2px 6px rgba(0, 0, 0, 0.03);
+    border-radius:   8px;
+    padding:         12px 16px;
+  }
+
+  .record-table tbody tr td {
+    width:           100% !important;
+    display:         block;
+    text-align:      left;
+    padding:         8px 0;
+  }
+
+  /* 播放鈕下移 */
+  .playimgage {
+    margin-top: 12px;
+  }
 }

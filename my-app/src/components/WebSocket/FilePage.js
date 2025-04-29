@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import "./FilePage.css";
 import { UserContext } from "../../App";
-import playerImage from '../images/player.png';
+import playerImage from '../images/play.png';
 
 
 function FilePage() {
@@ -125,10 +125,9 @@ function FilePage() {
                     <tr key={idx}>
                       <td>{filename.replace(/^.*?_/, '').replace(/\.wav$/, '')}</td>
                       <td>
-                        <button onClick={() => requestFile(filename)}>
+                        <button className= "playimgage" onClick={() => requestFile(filename)}>
                           <img
                             src={playerImage}
-                            className="player-image"
                             alt="播放音檔"
                           />
                         </button>

@@ -1,97 +1,118 @@
-/* 整體容器 */
+/* 整體頁面底色 & 容器 */
 .file-page-container {
   max-width: 1200px;
-  font-size: 18px;
-  text-align: center;
-  margin: auto;
+  margin: 0 auto;
   padding: 20px;
-  padding-top: 40px;
+  background: #f5f7fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
 }
 
-/* 錯誤訊息 */
-.error-text {
-  color: red;
-  font-weight: bold;
-  margin-bottom: 10px;
+/* 標題 */
+.file-page-container h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 24px;
+  color: #2c3e50;
 }
 
-/* 播放器圖片大小 */
-.player-image {
-  width: 28px;
-  height: 28px;
-  object-fit: contain;
-}
-
-/* 橫向母音分組容器 */
+/* 母音分組卡片 */
 .vowel-groups {
   display: flex;
-  justify-content: space-between;
-  flex-wrap: nowrap;         /* 不要自動換行 */
-  overflow-x: auto;          /* 如果螢幕太小就橫向滑動 */
+  flex-wrap: wrap;
   gap: 20px;
-  margin-top: 20px;
+  justify-content: center;
 }
-
-/* 每一個母音分組卡片 */
 .vowel-group {
-  flex: 1 1 0;
-  min-width: 200px;
-  border: 1px solid #ddd;
-  padding: 10px;
+  background: #fff;
   border-radius: 12px;
-  background-color: #fafafa;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  overflow: hidden;
+  width: 220px;
+  transition: transform 0.2s ease;
 }
 
-/* 母音標題 */
+
+/* 卡片標題 */
 .vowel-group h3 {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  margin: 0;
+  padding: 12px;
+  background: linear-gradient(135deg, #4a90e2, #357ab8);
+  color: white;
+  text-align: center;
+  font-size: 1.1rem;
 }
 
-/* 表格設計 */
+/* 表格整體 */
 .file-table {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
+  border-collapse: separate;
+  border-spacing: 0 8px; /* row gap */
+  margin: 12px 0;
 }
 
-.file-table th,
-.file-table td {
-  border: 1px solid #ccc;
-  padding: 6px;
-  font-size: 16px;
-  text-align: center;
+/* 表頭 */
+.file-table thead th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #555;
+  text-transform: uppercase;
 }
 
-/* 表格標題底色 */
-.file-table th {
-  background-color: #e6f2ff;
-  font-weight: bold;
-}
-
-/* 操作按鈕 */
-.file-table button {
-  padding: 4px 10px;
-  cursor: pointer;
+/* 表身每列 (卡片風) */
+.file-table tbody tr {
+  background: #fdfdfd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
   border-radius: 8px;
-  border: 1px solid #999;
-  background-color: #f8f8f8;
-  transition: background-color 0.3s ease;
+}
+.file-table tbody td {
+  padding: 12px 16px;
+  vertical-align: middle;
+  border: none;
+  font-size: 0.95rem;
+  color: #444;
 }
 
-.file-table button:hover {
-  background-color: #e0e0e0;
+/* 斑馬線效果（可選） */
+.file-table tbody tr:nth-child(even) {
+  background: #fbfcfc;
 }
 
-/* 適配手機：五欄改成換行 */
+/* 播放按鈕 */
+.playimgage {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #4a90e2;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  transition: transform 0.15s ease, background 0.15s ease;
+  cursor: pointer;
+}
+.playimgage img {
+  width: 24px;
+  height: 24px;
+}
+.playimgage:hover {
+  background: #357ab8;
+  transform: scale(1.1);
+}
+.playimgage:active {
+  transform: scale(0.95);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* 手機響應式 */
 @media (max-width: 768px) {
   .vowel-groups {
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
   }
-
   .vowel-group {
-    min-width: 100%;
+    width: 100%;
+    max-width: 350px;
   }
 }

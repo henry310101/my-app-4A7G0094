@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useContext, useState } from "react";
 import "./Record.css";
 import { UserContext } from "../../App";
-import { Chart, BarElement, BarController,CategoryScale, LinearScale, Tooltip, Title, Legend } from "chart.js";
+import {Chart,BarController,BarElement,LineController,LineElement,PointElement,CategoryScale,LinearScale,Tooltip,Title,Legend} from "chart.js";
+import playerImage from '../images/play.png';
+Chart.register(BarController,BarElement,CategoryScale,LinearScale,LineController,LineElement,PointElement,Tooltip,Title,Legend);
 
-Chart.register(BarController,BarElement,CategoryScale,LinearScale,Tooltip,Title,Legend);
 
 const Record = () => {
   const { userId } = useContext(UserContext);
@@ -11,6 +12,7 @@ const Record = () => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null); // Chart 實例
   const [recordList, setRecordList] = useState([]);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     ws.current = new WebSocket("ws://localhost:8765");
@@ -22,11 +24,16 @@ const Record = () => {
 
     ws.current.onmessage = (event) => {
       if (typeof event.data === "string") {
-          const data = JSON.parse(event.data);
-          if (data.type === "record") {
-            setRecordList(data.records || []);
-          }
-          console.log("收到訊息:", data);
+        const data = JSON.parse(event.data);
+        if (data.type === "record") {
+          setRecordList(data.records || []);
+        }
+      } else {
+        // 二進位資料 -> 播放
+        const blob = new Blob([event.data], { type: "audio/wav" });
+        const url  = URL.createObjectURL(blob);
+        audioRef.current.src = url;
+        audioRef.current.play();
       }
     };
 
@@ -35,46 +42,85 @@ const Record = () => {
     };
   }, []);
 
+  const playRecord = (record) => {
+    console.log("播放錄音:", record.comparison_time);
+    // 例如用 comparison_time 來識別是哪一筆
+    safeSend(JSON.stringify({
+      request: "play_record",
+      userId,
+      comparison_time: record.comparison_time
+    }));
+  };
+
   useEffect(() => {
-    if (recordList.length === 0 || !chartRef.current) return;
-
-    const labels = recordList.map((r) => r.uploaded_file);
-    const scores = recordList.map((r) => r.score);
-
+    if (!chartRef.current) return;
+    if (recordList.length === 0) return;
+  
+    // 1) 分組統計：最高分 & 次數
+    const stats = recordList.reduce((acc, { uploaded_file, score }) => {
+      if (!acc[uploaded_file]) {
+        acc[uploaded_file] = { maxScore: score, count: 1 };
+      } else {
+        acc[uploaded_file].maxScore = Math.max(acc[uploaded_file].maxScore, score);
+        acc[uploaded_file].count += 1;
+      }
+      return acc;
+    }, {});
+  
+    // 2) 拆出 labels, maxScores, counts
+    const labels = Object.keys(stats);
+    const maxScores = labels.map((word) => stats[word].maxScore);
+    const counts    = labels.map((word) => stats[word].count);
+  
+    // 3) 準備 data & config
     const data = {
       labels,
       datasets: [
         {
-          label: "分數",
-          data: scores,
-          backgroundColor: "rgba(167, 206, 231, 0.7)",
+          type: 'line',
+          label: '練習次數',
+          data: counts,
+          fill: false,
+          tension: 0.1,
+          borderColor: '#e94e77',
+        },
+        
+        {
+          type: 'bar',
+          label: '最高分數',
+          data: maxScores,
+          backgroundColor: '#4a90e2',
           borderRadius: 5,
         },
       ],
     };
-
+  
     const config = {
-      type: "bar",
+      type: 'bar',  
       data,
       options: {
         responsive: true,
         plugins: {
-          legend: { position: "top" },
-          title: {display: true, text: "評分紀錄"}
+          title: { display: true, text: '最高分數 & 練習次數' },
+          legend: { position: 'top' },
         },
         scales: {
-          y: {beginAtZero: true, title: "分數" },
-        }
-      }
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: '最高分數' },
+          },
+        },
+      },
     };
-
-    // 銷毀舊圖表
+  
+    // 4) 銷毀舊圖 & 建立新圖
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
-
     chartInstance.current = new Chart(chartRef.current, config);
+  
   }, [recordList]);
+  
 
   //送出資料
   const requestRecord = () => {
@@ -98,31 +144,42 @@ const Record = () => {
       <div style={{ width: "100%", maxWidth: "900px", margin: "auto", paddingBottom: "30px" }}>
         <canvas ref={chartRef} />
       </div>
-
+      <audio ref={audioRef} style={{ display: "none" }} />
       {/* 表格顯示 */}
       {recordList.length === 0 ? (
         <p>目前尚無記錄</p>
       ) : (
-        <table className="record-table">
-          <thead>
-            <tr>
-              <th>檢測題目</th>
-              <th>分數</th>
-              <th>距離</th>
-              <th>上傳時間</th>
-            </tr>
-          </thead>
-          <tbody>
-            {recordList.map((record, index) => (
-              <tr key={index}>
-                <td>{record.uploaded_file}</td>
-                <td>{record.score}</td>
-                <td>{record.distance}</td>
-                <td>{record.comparison_time}</td>
+        <div className="table-card">
+          <table className="record-table">
+            <thead>
+              <tr>
+                <th>檢測題目</th>
+                <th>分數</th>
+                <th>距離</th>
+                <th>上傳時間</th>
+                <th>音檔</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {[...recordList].reverse().map((record, index) => (
+                <tr key={index}>
+                  <td>{record.uploaded_file}</td>
+                  <td>{record.score}</td>
+                  <td>{record.distance}</td>
+                  <td>{record.comparison_time}</td>
+                  <td>
+                    <button className="playimgage" onClick={() => playRecord(record)}>
+                      <img
+                          src={playerImage}
+                          alt="播放音檔"
+                      />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
