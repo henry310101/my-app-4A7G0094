@@ -44,7 +44,6 @@ const Record = () => {
 
   const playRecord = (record) => {
     console.log("播放錄音:", record.comparison_time);
-    // 例如用 comparison_time 來識別是哪一筆
     safeSend(JSON.stringify({
       request: "play_record",
       userId,
@@ -81,7 +80,7 @@ const Record = () => {
           label: '練習次數',
           data: counts,
           fill: false,
-          tension: 0.1,
+          tension: 0.01,
           borderColor: '#e94e77',
         },
         
@@ -100,6 +99,10 @@ const Record = () => {
       data,
       options: {
         responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+          padding: 0
+        },
         plugins: {
           title: { display: true, text: '最高分數 & 練習次數' },
           legend: { position: 'top' },
@@ -141,7 +144,7 @@ const Record = () => {
       <h1>紀錄</h1>
 
       {/* 圖表顯示 */}
-      <div style={{ width: "100%", maxWidth: "900px", margin: "auto", paddingBottom: "30px" }}>
+      <div className="chart-wrapper">
         <canvas ref={chartRef} />
       </div>
       <audio ref={audioRef} style={{ display: "none" }} />

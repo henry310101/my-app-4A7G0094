@@ -20,13 +20,6 @@
 }
 
 /* ========== 圖表區塊 ========== */
-.Record_container > div:first-of-type {
-  background:    #f9fbfc;
-  padding:       16px;
-  border-radius: 12px;
-  box-shadow:    inset 0 2px 4px rgba(0, 0, 0, 0.02);
-  margin-bottom: 32px;
-}
 
 canvas {
   width:  100%  !important;
@@ -173,4 +166,22 @@ audio {
   .playimgage {
     margin-top: 12px;
   }
+}
+
+/* Record.css */
+
+.chart-wrapper {
+  width:       100%;
+  max-width:   900px;
+  height:      350px;            /* 視需要調整 */
+  margin:      0 auto 30px;
+  overflow:    hidden;
+  border-radius: 12px;
+  background:  #f9fbfc;          /* 小卡背景 */
+  box-shadow:  inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.chart-wrapper canvas {
+  width:  100% !important;
+  height: 100% !important;
 }

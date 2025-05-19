@@ -1,56 +1,118 @@
-/* Register.css */
+/* 載入字型（可放在 index.css 或這裡都行） */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+:root {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --bg-page: #f3f4f6;
+  --bg-card: #ffffff;
+  --input-border: #d1d5db;
+  --input-focus: #4f46e5;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: var(--bg-page);
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .register-container {
-    width: 300px;
-    margin: 50px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    text-align: center;
-    background: #f9f9f9;
-  }
-  
-  .register-container h1 {
-    margin-bottom: 20px;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-    text-align: left;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: bold;
-  }
-  
-  .form-group input {
-    width: 100%;
-    padding: 6px;
-    box-sizing: border-box;
-  }
-  
-  button[type="submit"] {
-    padding: 8px 16px;
-    cursor: pointer;
-    border: none;
-    background: #007bff;
-    color: #fff;
-    border-radius: 4px;
-  }
-  
-  button[type="submit"]:hover {
-    background: #0056b3;
-  }
-  
-  .register-error {
-    color: red;
-    margin-bottom: 10px;
-  }
-  
-  .register-info {
-    color: green;
-    margin-bottom: 10px;
-  }
-  
+  width: 360px;
+  padding: 2rem;
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.register-container h1 {
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-group input {
+  width: 93%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.register-error,
+.register-info {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.register-error {
+  color: #dc2626;
+}
+
+.register-info {
+  color: #16a34a;
+}
+
+.button-group {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.btn {
+  flex: 1;
+  padding: 0.6rem 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.btn-secondary:hover {
+  background-color: #d1d5db;
+}
+
+

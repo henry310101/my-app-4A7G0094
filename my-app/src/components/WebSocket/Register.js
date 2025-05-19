@@ -132,10 +132,8 @@ function Register() {
         </div>
 
         <div className="button-group">
-          <button type="submit">註冊</button>
-          <button type="button" onClick={onLogin}>
-            返回
-          </button>
+          <button type="submit" className="btn btn-primary">註冊</button>
+          <button type="button" className="btn btn-secondary" onClick={onLogin}>返回</button>
         </div>
       </form>
     </div>

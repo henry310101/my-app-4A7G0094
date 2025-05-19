@@ -5,9 +5,25 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* index.css 已包含 */
+:root {
+  --primary:      #4a90e2;
+  --primary-hover:#3b7ec1;
+  --bg-page: #f3f4f6;
+  --bg-card: #ffffff;
+  --input-border: #d1d5db;
+  --input-focus: #4a90e2;
+}
+
+body {
+  background: var(--bg-page);
+  /* 其他置中設定... */
 }
