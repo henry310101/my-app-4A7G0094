@@ -1,4 +1,5 @@
-// Webspeek.js
+// File: src/components/Webspeek/Webspeek.js
+
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { UserContext } from "../../App";
 import "./Reresult.css";
@@ -41,8 +42,10 @@ export default function Webspeek() {
 
       // 如果是陣列，就當成檔案列表來處理
       if (Array.isArray(data)) {
-        // 去掉 .wav 後綴
-        const topics = data.map((fn) => fn.replace(/\.wav$/i, "").replace(/^.*?_/, ''));
+        // 去掉 .wav 後綴、去掉前綴，並按照 A-Z 排序
+        const topics = data
+          .map((fn) => fn.replace(/\.wav$/i, "").replace(/^.*?_/, ""))
+          .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
         setTopicList(topics);
         // 若還沒選過預設，就自動選第一個
         if (!selectedTopic && topics.length > 0) {
@@ -113,6 +116,20 @@ export default function Webspeek() {
     }
   };
 
+const getGrade = (score) => {
+  if (score >= 90 && score <= 100) return "A+";
+  else if (score >= 85 && score <= 89) return "A";
+  else if (score >= 80 && score <= 84) return "A-";
+  else if (score >= 77 && score <= 79) return "B+";
+  else if (score >= 73 && score <= 76) return "B";
+  else if (score >= 70 && score <= 72) return "B-";
+  else if (score >= 67 && score <= 69) return "C+";
+  else if (score >= 63 && score <= 66) return "C";
+  else if (score >= 60 && score <= 62) return "C-";
+  else if (score < 60) return "D";
+};
+
+
   const stopRecording = () => {
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
@@ -120,13 +137,12 @@ export default function Webspeek() {
     }
   };
 
-  //檔案上傳流程
+  // 檔案上傳流程
   const handleFileSelect = (e) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
     }
   };
-  //選擇檔案後，讀取檔案內容並轉換為 Base64
   const handleFileUpload = () => {
     if (!selectedFile) {
       console.warn("未選擇檔案");
@@ -150,7 +166,7 @@ export default function Webspeek() {
 
   return (
     <div className="container">
-      <h1>語音評級</h1>
+      <h1>發音評級</h1>
 
       {/* 動態產生題目下拉 */}
       <div style={{ marginBottom: "1rem" }}>

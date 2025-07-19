@@ -1,18 +1,57 @@
+// File: src/components/Record/Record.js
+
 import React, { useEffect, useRef, useContext, useState } from "react";
 import "./Record.css";
 import { UserContext } from "../../App";
-import {Chart,BarController,BarElement,LineController,LineElement,PointElement,CategoryScale,LinearScale,Tooltip,Title,Legend} from "chart.js";
+import {
+  Chart,
+  BarController,
+  BarElement,
+  LineController,
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Title,
+  Legend
+} from "chart.js";
 import playerImage from '../images/play.png';
-Chart.register(BarController,BarElement,CategoryScale,LinearScale,LineController,LineElement,PointElement,Tooltip,Title,Legend);
 
+Chart.register(
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  LineController,
+  LineElement,
+  PointElement,
+  Tooltip,
+  Title,
+  Legend
+);
 
 const Record = () => {
   const { userId } = useContext(UserContext);
   const ws = useRef(null);
   const chartRef = useRef(null);
-  const chartInstance = useRef(null); // Chart 實例
+  const chartInstance = useRef(null);
   const [recordList, setRecordList] = useState([]);
   const audioRef = useRef(null);
+
+  // 分級對照函式
+  const getGrade = (score) => {
+    if (score >= 90) return "A+";
+    if (score >= 85) return "A";
+    if (score >= 80) return "A-";
+    if (score >= 77) return "B+";
+    if (score >= 73) return "B";
+    if (score >= 70) return "B-";
+    if (score >= 67) return "C+";
+    if (score >= 63) return "C";
+    if (score >= 60) return "C-";
+    return "D";
+  };
 
   useEffect(() => {
     ws.current = new WebSocket("ws://localhost:8765");
@@ -29,9 +68,8 @@ const Record = () => {
           setRecordList(data.records || []);
         }
       } else {
-        // 二進位資料 -> 播放
         const blob = new Blob([event.data], { type: "audio/wav" });
-        const url  = URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob);
         audioRef.current.src = url;
         audioRef.current.play();
       }
@@ -52,10 +90,8 @@ const Record = () => {
   };
 
   useEffect(() => {
-    if (!chartRef.current) return;
-    if (recordList.length === 0) return;
-  
-    // 1) 分組統計：最高分 & 次數
+    if (!chartRef.current || recordList.length === 0) return;
+
     const stats = recordList.reduce((acc, { uploaded_file, score }) => {
       if (!acc[uploaded_file]) {
         acc[uploaded_file] = { maxScore: score, count: 1 };
@@ -65,13 +101,11 @@ const Record = () => {
       }
       return acc;
     }, {});
-  
-    // 2) 拆出 labels, maxScores, counts
+
     const labels = Object.keys(stats);
-    const maxScores = labels.map((word) => stats[word].maxScore);
-    const counts    = labels.map((word) => stats[word].count);
-  
-    // 3) 準備 data & config
+    const maxScores = labels.map(word => stats[word].maxScore);
+    const counts = labels.map(word => stats[word].count);
+
     const data = {
       labels,
       datasets: [
@@ -80,10 +114,9 @@ const Record = () => {
           label: '練習次數',
           data: counts,
           fill: false,
-          tension: 0.01,
+          tension: 0.1,
           borderColor: '#e94e77',
         },
-        
         {
           type: 'bar',
           label: '最高分數',
@@ -93,16 +126,12 @@ const Record = () => {
         },
       ],
     };
-  
+
     const config = {
-      type: 'bar',  
       data,
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        layout: {
-          padding: 0
-        },
         plugins: {
           title: { display: true, text: '最高分數 & 練習次數' },
           legend: { position: 'top' },
@@ -110,27 +139,21 @@ const Record = () => {
         scales: {
           y: {
             beginAtZero: true,
-            title: { display: true, text: '最高分數' },
+            title: { display: true, text: '分數' },
           },
         },
       },
     };
-  
-    // 4) 銷毀舊圖 & 建立新圖
-    if (chartInstance.current) {
-      chartInstance.current.destroy();
-    }
-    chartInstance.current = new Chart(chartRef.current, config);
-  
-  }, [recordList]);
-  
 
-  //送出資料
+    chartInstance.current?.destroy();
+    chartInstance.current = new Chart(chartRef.current, config);
+
+  }, [recordList]);
+
   const requestRecord = () => {
     safeSend(JSON.stringify({ request: "record", userId }));
   };
 
-  //送出請求
   const safeSend = (data) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(data);
@@ -143,12 +166,11 @@ const Record = () => {
     <div className="Record_container">
       <h1>紀錄</h1>
 
-      {/* 圖表顯示 */}
       <div className="chart-wrapper">
         <canvas ref={chartRef} />
       </div>
       <audio ref={audioRef} style={{ display: "none" }} />
-      {/* 表格顯示 */}
+
       {recordList.length === 0 ? (
         <p>目前尚無記錄</p>
       ) : (
@@ -159,7 +181,7 @@ const Record = () => {
                 <th>檢測題目</th>
                 <th>分數</th>
                 <th>距離</th>
-                <th>上傳時間</th>
+                <th>練習時間</th>
                 <th>音檔</th>
               </tr>
             </thead>
@@ -167,15 +189,12 @@ const Record = () => {
               {[...recordList].reverse().map((record, index) => (
                 <tr key={index}>
                   <td>{record.uploaded_file}</td>
-                  <td>{record.score}</td>
+                  <td>{getGrade(record.score)}</td>
                   <td>{record.distance}</td>
                   <td>{record.comparison_time}</td>
                   <td>
-                    <button className="playimgage" onClick={() => playRecord(record)}>
-                      <img
-                          src={playerImage}
-                          alt="播放音檔"
-                      />
+                    <button className="playimage" onClick={() => playRecord(record)}>
+                      <img src={playerImage} alt="播放音檔" />
                     </button>
                   </td>
                 </tr>

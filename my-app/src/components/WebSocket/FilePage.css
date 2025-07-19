@@ -1,118 +1,185 @@
-/* 整體頁面底色 & 容器 */
-.file-page-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  background: #f5f7fa;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
+/* FilePage.css 重新設計：四組並排卡片 */
+
+/* ============================= */
+/*       全域變數與基礎樣式      */
+/* ============================= */
+:root {
+  --bg-page: #f0f4f8;
+  --text-primary: #2e3a46;
+  --text-secondary: #555;
+  --card-bg: #ffffff;
+  --accent-start: #4a90e2;
+  --accent-end: #357ab8;
+  --shadow-light: rgba(0, 0, 0, 0.05);
+  --shadow-strong: rgba(0, 0, 0, 0.1);
+  --radius: 12px;
+  --transition: 0.3s ease;
 }
 
-/* 標題 */
-.file-page-container h2 {
-  text-align: center;
-  font-size: 35px;
-  margin-bottom: 24px;
-  color: #2c3e50;
-}
-
-/* 母音分組卡片 */
-.vowel-groups {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
-.vowel-group {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-  overflow: hidden;
-  width: 220px;
-  transition: transform 0.2s ease;
-}
-
-
-/* 卡片標題 */
-.vowel-group h3 {
+* {
+  box-sizing: border-box;
   margin: 0;
-  padding: 12px;
-  background: linear-gradient(135deg, #4a90e2, #357ab8);
-  color: white;
-  text-align: center;
-  font-size: 20px;
+  padding: 0;
 }
 
-/* 表格整體 */
+body {
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+}
+
+/* ============================= */
+/*        容器與標題樣式         */
+/* ============================= */
+.file-page-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.file-page-container h2::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+  margin: 0.5rem auto 0;
+  border-radius: 2px;
+}
+
+/* ============================= */
+/*         卡片排版 Grid         */
+/* ============================= */
+.vowel-groups {
+  margin-top: 3rem;
+  display: grid;
+  /* 四欄並排 */
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+  padding-bottom: 2rem;
+}
+
+/* Tablet: 兩欄 */
+@media (max-width: 1024px) {
+  .vowel-groups {
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+  }
+}
+
+/* 手機: 一欄 */
+@media (max-width: 600px) {
+  .vowel-groups {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================= */
+/*         單張卡片樣式          */
+/* ============================= */
+.vowel-group {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px var(--shadow-light), 0 2px 6px var(--shadow-strong);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.vowel-group:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px var(--shadow-light), 0 4px 12px var(--shadow-strong);
+}
+
+/* 卡片標頭 */
+.vowel-group h3 {
+  background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+  color: #fff;
+  text-align: center;
+  padding: 0.75rem 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* ============================= */
+/*         檔案列表表格          */
+/* ============================= */
 .file-table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 0 8px; /* row gap */
-  margin: 12px 0;
+  border-spacing: 0 8px;
+  margin: 1rem 0;
+  flex-grow: 1;
 }
 
-/* 表頭 */
 .file-table thead th {
-  padding: 10px 16px;
-  text-align: left;
-  font-size: 20px;
-  color: #555;
+  font-size: 1rem;
+  color: var(--text-secondary);
   text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.75rem 1rem;
+  text-align: left;
 }
 
-/* 表身每列 (卡片風) */
 .file-table tbody tr {
-  background: #fdfdfd;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-  border-radius: 8px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 6px var(--shadow-light);
+  transition: background var(--transition);
 }
+
+.file-table tbody tr:hover {
+  background: #f7faff;
+}
+
 .file-table tbody td {
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  color: var(--text-primary);
   vertical-align: middle;
-  border: none;
-  font-size: 20px;
-  color: #444;
 }
 
-/* 斑馬線效果（可選） */
-.file-table tbody tr:nth-child(even) {
-  background: #fbfcfc;
-}
-
-/* 播放按鈕 */
-.playimgage {
-  width: 44px;
-  height: 44px;
-  display: flex;
+/* ============================= */
+/*         播放按鈕樣式          */
+/* ============================= */
+.playimage {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #4a90e2;
+  width: 32px;
+  height: 32px;
+  background: var(--accent-start);
+  border: none;
   border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-  transition: transform 0.15s ease, background 0.15s ease;
   cursor: pointer;
-}
-.playimgage img {
-  width: 24px;
-  height: 24px;
-}
-.playimgage:hover {
-  background: #357ab8;
-  transform: scale(1.1);
-}
-.playimgage:active {
-  transform: scale(0.95);
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform var(--transition), background var(--transition);
 }
 
-/* 手機響應式 */
-@media (max-width: 768px) {
-  .vowel-groups {
-    flex-direction: column;
-    align-items: center;
-  }
-  .vowel-group {
-    width: 100%;
-    max-width: 350px;
-  }
+.playimage img {
+  width: 16px;
+  height: 16px;
+}
+
+.playimage:hover {
+  background: var(--accent-end);
+  transform: scale(1.1);
+}
+
+.playimage:active {
+  transform: scale(0.95);
+}
+
+/* ============================= */
+/*         錯誤訊息顯示          */
+/* ============================= */
+.error-text {
+  color: #e74c3c;
+  background: #fdecea;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 500;
 }
