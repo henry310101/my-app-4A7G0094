@@ -18,6 +18,7 @@ import {
 } from "chart.js";
 import playerImage from '../images/play.png';
 
+// 註冊必要的元件
 Chart.register(
   BarController,
   BarElement,
@@ -53,6 +54,7 @@ const Record = () => {
     return "D";
   };
 
+  // 初始化 WebSocket 並取得紀錄
   useEffect(() => {
     ws.current = new WebSocket("ws://localhost:8765");
 
@@ -68,6 +70,7 @@ const Record = () => {
           setRecordList(data.records || []);
         }
       } else {
+        // 接收音訊 blob，並播放
         const blob = new Blob([event.data], { type: "audio/wav" });
         const url = URL.createObjectURL(blob);
         audioRef.current.src = url;
@@ -80,6 +83,18 @@ const Record = () => {
     };
   }, []);
 
+  const requestRecord = () => {
+    safeSend(JSON.stringify({ request: "record", userId }));
+  };
+
+  const safeSend = (data) => {
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      ws.current.send(data);
+    } else {
+      console.error("❌ WebSocket 未開啟，無法發送訊息");
+    }
+  };
+
   const playRecord = (record) => {
     console.log("播放錄音:", record.comparison_time);
     safeSend(JSON.stringify({
@@ -89,9 +104,11 @@ const Record = () => {
     }));
   };
 
+  // 當 recordList 更新時，重繪雙軸圖表
   useEffect(() => {
     if (!chartRef.current || recordList.length === 0) return;
 
+    // 計算每個檔名的最高分與練習次數
     const stats = recordList.reduce((acc, { uploaded_file, score }) => {
       if (!acc[uploaded_file]) {
         acc[uploaded_file] = { maxScore: score, count: 1 };
@@ -106,6 +123,7 @@ const Record = () => {
     const maxScores = labels.map(word => stats[word].maxScore);
     const counts = labels.map(word => stats[word].count);
 
+    // 準備資料集，並指定 yAxisID
     const data = {
       labels,
       datasets: [
@@ -116,6 +134,7 @@ const Record = () => {
           fill: false,
           tension: 0.1,
           borderColor: '#e94e77',
+          yAxisID: 'countAxis',
         },
         {
           type: 'bar',
@@ -123,44 +142,51 @@ const Record = () => {
           data: maxScores,
           backgroundColor: '#4a90e2',
           borderRadius: 5,
+          yAxisID: 'scoreAxis',
         },
       ],
     };
 
+    // 雙 Y 軸設定
     const config = {
       data,
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          title: { display: true, text: '最高分數 & 練習次數' },
-          legend: { position: 'top' },
+          title: {
+            display: true,
+            text: '最高分數 & 練習次數',
+          },
+          legend: {
+            position: 'top',
+          },
         },
         scales: {
-          y: {
+          scoreAxis: {
+            type: 'linear',
+            position: 'left',
             beginAtZero: true,
             title: { display: true, text: '分數' },
+            min: 0,
+            max: 100,
+          },
+          countAxis: {
+            type: 'linear',
+            position: 'right',
+            beginAtZero: true,
+            title: { display: true, text: '次數' },
+            grid: { drawOnChartArea: false }, // 不重疊左軸的網格
           },
         },
       },
     };
 
+    // 銷毀舊圖，建立新圖
     chartInstance.current?.destroy();
     chartInstance.current = new Chart(chartRef.current, config);
 
   }, [recordList]);
-
-  const requestRecord = () => {
-    safeSend(JSON.stringify({ request: "record", userId }));
-  };
-
-  const safeSend = (data) => {
-    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-      ws.current.send(data);
-    } else {
-      console.error("❌ WebSocket 未開啟，無法發送訊息");
-    }
-  };
 
   return (
     <div className="Record_container">
