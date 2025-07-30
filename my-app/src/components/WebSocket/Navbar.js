@@ -16,9 +16,9 @@ const Navbar = ({ onLogout }) => {
     <nav className="navbar">
       <ul className="nav-links">
         <li><Link to="/Homepage">首頁</Link></li>
+        <li><Link to="/files">題庫練習</Link></li>
         <li><Link to="/Webspeek">發音評級</Link></li>
-        <li><Link to="/files">題庫</Link></li>
-        <li><Link to="/Record">記錄</Link></li>
+        <li><Link to="/Record">評級記錄</Link></li>
         <li><Link onClick={handleLogout}>登出</Link></li>
         
       </ul>

@@ -147,27 +147,33 @@ const Record = () => {
       ],
     };
 
-    // 雙 Y 軸設定
+
     const config = {
       data,
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          title: {
-            display: true,
-            text: '最高分數 & 練習次數',
-          },
           legend: {
             position: 'top',
           },
         },
         scales: {
+          x: {
+            ticks: {
+              font: {
+                size: 15, 
+              },
+            },
+          },
           scoreAxis: {
             type: 'linear',
             position: 'left',
             beginAtZero: true,
-            title: { display: true, text: '分數' },
+            title: { display: true, text: '分數', font: { size: 15 } },
+            ticks: {
+              font: { size: 15 }, 
+            },
             min: 0,
             max: 100,
           },
@@ -175,12 +181,16 @@ const Record = () => {
             type: 'linear',
             position: 'right',
             beginAtZero: true,
-            title: { display: true, text: '次數' },
-            grid: { drawOnChartArea: false }, // 不重疊左軸的網格
+            title: { display: true, text: '次數', font: { size: 15 } },
+            ticks: {
+              font: { size: 15 }, 
+            },
+            grid: { drawOnChartArea: false }, 
           },
         },
       },
     };
+
 
     // 銷毀舊圖，建立新圖
     chartInstance.current?.destroy();
@@ -190,7 +200,7 @@ const Record = () => {
 
   return (
     <div className="Record_container">
-      <h1>紀錄</h1>
+      <h1>評級紀錄</h1>
 
       <div className="chart-wrapper">
         <canvas ref={chartRef} />
@@ -205,9 +215,9 @@ const Record = () => {
             <thead>
               <tr>
                 <th>檢測題目</th>
-                <th>分數</th>
+                <th>評級</th>
                 <th>距離</th>
-                <th>練習時間</th>
+                <th>檢測時間</th>
                 <th>音檔</th>
               </tr>
             </thead>
